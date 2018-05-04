@@ -34,6 +34,13 @@
 */
 typedef int (*at_cmd_handler_t)(const char *);
 
+/*  \brief index of at command callback function in hash value array
+ * */
+#define AT_CMD_INDEX_NO_PARAM    0
+#define AT_CMD_INDEX_WITH_PARAM  1
+#define AT_CMD_INDEX_QUERY_PARAM 2
+#define AT_CMD_INDEX_CHECK_PARAM 3
+
 #include "hash.h"
 
 /*  \brief at_cmd_t based on hash_t
@@ -47,6 +54,9 @@ typedef hash_t at_cmd_t;  //!< key,value,next
 #define HASH_VALUE_COUNT 4
 #define HASH_VALUE_SIZE  (sizeof(at_cmd_handler_t)*HASH_VALUE_COUNT)
 
+//#define AT_CMD_MAX_LEN       20  //!< at command name string length
+#define AT_CMD_PARAM_MAX_LEN 520  //!< at command parameter string length
+
 /*! \brief at command class based on hash class
  *         - array the hash array(hash * [])
  *         - hash_tab_size the count of hash table array(size_t)
@@ -55,6 +65,7 @@ typedef hash_t at_cmd_t;  //!< key,value,next
 typedef struct at_cmd_class {
 	hash_class_t * hash_instance;  //!< array,hash_tab_size
 	size_t at_cmd_len;  //!< max length of at command name
+	size_t at_cmd_param_len;
 	char delimiter[8];  //!< at command delimiter
 } at_cmd_class_t;
 
@@ -73,7 +84,7 @@ typedef struct at_cmd_class {
 #define at_cmd_class_dump                  hash_dump
 #define at_cmd_class_load                  hash_load
 */
-at_cmd_class_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, char * delimiter);
+at_cmd_class_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_t at_cmd_param_len, char * delimiter);
 void at_cmd_class_release(at_cmd_class_t * instance);
 void at_cmd_insert(at_cmd_class_t * instance, const char * cmd, at_cmd_handler_t * handlers);
 void at_cmd_delete(at_cmd_class_t * instance, const char * cmd);

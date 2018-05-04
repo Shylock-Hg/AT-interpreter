@@ -4,11 +4,14 @@
  *  \email tcath2s@gmail.com
  * */
 
+#include <string.h>
+
 #include "at_command.h"
 
-#define AT_CMD_MAX_LEN   10
-#define AT_CMD_DELIMITER "\n"
-#define HASH_TAB_SIZE    100
+#define AT_CMD_MAX_LEN       20
+#define AT_CMD_MAX_PARAM_LEN 512
+#define AT_CMD_DELIMITER     "\n"
+#define HASH_TAB_SIZE        100
 
 #define UNUSED(x) (void)(x)
 
@@ -43,13 +46,17 @@ int main(int argc, char * argv[]){
 	at_cmd_handler_t handlers[HASH_VALUE_COUNT] = {at_cmd_hello_handler0,
 		at_cmd_hello_handler1,NULL,at_cmd_hello_handler3};
 
-	at_cmd_class_t * instance = at_cmd_class_new(HASH_TAB_SIZE,AT_CMD_MAX_LEN,AT_CMD_DELIMITER);
+	at_cmd_class_t * instance = at_cmd_class_new(HASH_TAB_SIZE,
+			AT_CMD_MAX_LEN,AT_CMD_MAX_PARAM_LEN,AT_CMD_DELIMITER);
 
 	at_cmd_insert(instance,TEST_AT_CMD_HELLO,handlers);
 
 	while(1){
 		printf("[info]:please input command :\n");
 		scanf("%s",cmd);
+		strcat(cmd,instance->delimiter);
+		//printf("%s",cmd);
+		/*
 		struct hash * item = at_cmd_lookup(instance,cmd);
 		if(NULL != item){
 			at_cmd_handler_t * callback = item->value;
@@ -60,6 +67,8 @@ int main(int argc, char * argv[]){
 		}else{
 			printf("[err]:invalid command!\n");
 		}
+		*/
+		at_cmd_handle_str(instance,cmd);
 
 		//printf("[info]:please input key string to delete :\n");
 		//scanf("%s",key);
