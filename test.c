@@ -42,7 +42,6 @@ int at_cmd_hello_handler3(const char * parameter){
 /********** test at commands **********/
 
 int main(int argc, char * argv[]){
-	char cmd[200] = {0};
 	at_cmd_handler_t handlers[HASH_VALUE_COUNT] = {at_cmd_hello_handler0,
 		at_cmd_hello_handler1,NULL,at_cmd_hello_handler3};
 
@@ -51,32 +50,24 @@ int main(int argc, char * argv[]){
 
 	at_cmd_insert(instance,TEST_AT_CMD_HELLO,handlers);
 
+/*
+        //< handle string input
+	//char cmd[200] = {0};
 	while(1){
 		printf("[info]:please input command :\n");
 		scanf("%s",cmd);
 		strcat(cmd,instance->delimiter);
-		//printf("%s",cmd);
-		/*
-		struct hash * item = at_cmd_lookup(instance,cmd);
-		if(NULL != item){
-			at_cmd_handler_t * callback = item->value;
-			for(int i=0; i<HASH_VALUE_COUNT; i++){
-				if(NULL != callback[i])
-					callback[i]("world");
-			}
-		}else{
-			printf("[err]:invalid command!\n");
-		}
-		*/
 		at_cmd_handle_str(instance,cmd);
 
-		//printf("[info]:please input key string to delete :\n");
-		//scanf("%s",key);
-		//hash_delete(instance,key);
-		
-		//hash_release(instance);
-		//instance = NULL;
 	}
+*/
+
+	//< handle steam input
+	FILE * f = fopen("test.at","r");
+	at_cmd_handle_stream(instance, f);
+
+	fclose(f);
+	at_cmd_class_release(instance);
 
 	return 0;
 }

@@ -210,3 +210,10 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 	at_cmd_handle_str(instance, delimiter+strlen(instance->delimiter));
 }
 
+void at_cmd_handle_stream(at_cmd_class_t * instance, FILE * f){
+	char * buffer[AT_CMD_PARAM_MAX_LEN] = {0};
+	while(NULL != fgets((char*)buffer, sizeof(buffer), f)){
+		at_cmd_handle_str(instance, (char*)buffer);
+	}
+}
+
