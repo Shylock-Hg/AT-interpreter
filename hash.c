@@ -227,7 +227,4 @@ struct hash * hash_lookup(const struct hash_class * const instance, const char *
 	return NULL;
 }
 
-void hash_dump(const struct hash_class * const instance, FILE * f);
-
-int hash_load(struct hash_class * const instance, FILE * f);
 

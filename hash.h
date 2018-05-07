@@ -73,15 +73,16 @@ struct hash * hash_lookup(const struct hash_class * const instance, const char *
 
 /*! \brief printf hash-table to c-array text in file
  *  \param instance hash instance
+ *  \param file file dump to 
  * */
-void hash_dump(const struct hash_class * const instance, FILE * f);
+void hash_dump(const struct hash_class * const instance, const char * file);
 
 /*! \brief load hash-table frome file append to list and insert to table
  *  \param instance hash instance
- *  \param f file loadded
+ *  \param file file loadded
  *  \retval 0==ok,-1==err
  * */
-int hash_load(struct hash_class * const instance, FILE * f);
+int hash_load(struct hash_class * const instance, const char * file);
 
 #ifdef __cplusplus
 	}
