@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "stdlog.h"
 #include "at_command.h"
 
 at_cmd_class_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_t at_cmd_param_len, char * delimiter){
@@ -68,9 +69,9 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 						if(NULL != handler[AT_CMD_INDEX_CHECK_PARAM])
 							handler[AT_CMD_INDEX_CHECK_PARAM](NULL);
 					}else
-						printf("[warn]:unimplement function check parameter\n");
+						printf_DBG(DBG_LEVEL_WARN,"unimplement function check parameter\n");
 				}else{
-					printf("[warn1]:unregister command-`%s`!\n",cmd);
+					printf_DBG(DBG_LEVEL_WARN,"unregister command-`%s`!\n",cmd);
 				}
 				
 			}else{  //!< command with parameters
@@ -81,9 +82,9 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 						if(NULL != handler[AT_CMD_INDEX_WITH_PARAM])
 							handler[AT_CMD_INDEX_WITH_PARAM](anchor+1);
 					}else
-						printf("[warn]:unimplement function check parameter\n");
+						printf_DBG(DBG_LEVEL_WARN,"unimplement function check parameter\n");
 				}else{
-					printf("[warn1]:unregister command-`%s`!\n",cmd);
+					printf_DBG(DBG_LEVEL_WARN,"unregister command-`%s`!\n",cmd);
 				}
 			
 			}
@@ -96,9 +97,9 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 						if(NULL != handler[AT_CMD_INDEX_QUERY_PARAM])
 							handler[AT_CMD_INDEX_QUERY_PARAM](NULL);
 					}else
-						printf("[warn]:unimplement function check parameter\n");
+						printf_DBG(DBG_LEVEL_WARN,"unimplement function check parameter\n");
 				}else{
-					printf("[warn1]:unregister command-`%s`!\n",cmd);
+					printf_DBG(DBG_LEVEL_WARN,"unregister command-`%s`!\n",cmd);
 				}
 
 			break;
@@ -110,17 +111,17 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 						if(NULL != handler[AT_CMD_INDEX_NO_PARAM])
 							handler[AT_CMD_INDEX_NO_PARAM](NULL);
 					}else
-						printf("[warn]:unimplement function check parameter\n");
+						printf_DBG(DBG_LEVEL_WARN,"unimplement function check parameter\n");
 				}else{
-					printf("[warn1]:unregister command-`%s`!\n",cmd);
+					printf_DBG(DBG_LEVEL_WARN,"unregister command-`%s`!\n",cmd);
 				}
 
 			break;
 		default:
-			printf("[warn]:invalid format!\n");
+			printf_DBG(DBG_LEVEL_WARN,"invalid format!\n");
 		}
 	}else{
-		printf("[warn]:invalid command format!\n");
+		printf_DBG(DBG_LEVEL_WARN,"invalid command format!\n");
 	}
 	free(cmd);
 	
@@ -129,6 +130,10 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 
 void at_cmd_handle_stream(at_cmd_class_t * instance, const char * file){
 	FILE * stream = fopen(file,"r");
+	if(NULL == stream){
+		printf_DBG(DBG_LEVEL_ERR, "Unexist at script file-`%s`!\n",file);
+		return;
+	}
 
 	char buffer[AT_CMD_PARAM_MAX_LEN] = {0};
 	while(NULL != fgets((char*)buffer, sizeof(buffer), stream)){
