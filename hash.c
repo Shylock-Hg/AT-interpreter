@@ -1,4 +1,4 @@
-/*! \brief 
+/*! \brief simple implement of hash algorithm
  *  \author Shylock Hg
  *  \date 2018-04-14
  *  \email tcath2s@gmail.com
