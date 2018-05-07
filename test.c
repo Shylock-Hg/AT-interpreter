@@ -42,6 +42,7 @@ int at_cmd_hello_handler3(const char * parameter){
 /********** test at commands **********/
 
 int main(int argc, char * argv[]){
+	//< create at parser instance
 	at_cmd_handler_t handlers[HASH_VALUE_COUNT] = {at_cmd_hello_handler0,
 		at_cmd_hello_handler1,NULL,at_cmd_hello_handler3};
 
@@ -51,7 +52,7 @@ int main(int argc, char * argv[]){
 	at_cmd_insert(instance,TEST_AT_CMD_HELLO,handlers);
 
 /*
-        //< handle string input
+        //< handle standard input
 	//char cmd[200] = {0};
 	while(1){
 		printf("[info]:please input command :\n");
@@ -62,7 +63,7 @@ int main(int argc, char * argv[]){
 	}
 */
 
-	//< handle steam input
+	//< handle file steam input
 	FILE * f = fopen("test.at","r");
 	at_cmd_handle_stream(instance, f);
 

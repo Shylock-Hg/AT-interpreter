@@ -14,7 +14,7 @@
 ///! \defgroup at_command
 //  @{
 
-/*  \brief 
+/*! \brief 
  *       |at command prototype|description|
  *       |:--|:--|
  *       |AT+<cmd>                  |execute command without parameters|
@@ -23,10 +23,11 @@
  *       |AT+<cmd>=?                |query possible parameters value|
  * */
 
+#include <stdio.h>
+
 ///! \defgroup at_command_prototype
 /// @{
 //
-#include <stdio.h>
 
 /*  \brief at command function pointer prototype
  *  \param pointer to command parameters string
@@ -74,20 +75,38 @@ typedef struct at_cmd_class {
 ///! \defgroup at_command_inherit_method
 /// @{
 ///< inherit all methods of hash_class_t
-/*
-#define at_cmd_class_new                   hash_new
-#define at_cmd_class_release               hash_release
-#define at_cmd_insert(instance,key,value) \
-	hash_insert(instance,key,value,HASH_VALUE_SIZE)
-#define at_cmd_delete                      hash_delete
-#define at_cmd_lookup                      hash_lookup
-#define at_cmd_class_dump                  hash_dump
-#define at_cmd_class_load                  hash_load
-*/
+
+/*  \brief create at command object
+ *  \param HASH_TAB_SIZE count of hash table
+ *  \param at_cmd_len length of at command name
+ *  \param at_cmd_param_len length of at command string
+ *  \param delimiter delimiter of at command 
+ * */
 at_cmd_class_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_t at_cmd_param_len, char * delimiter);
+
+/*  \brief release at command object
+ *  \param instance instance of at command 
+ * */
 void at_cmd_class_release(at_cmd_class_t * instance);
+
+/*  \brief insert one at command to instance
+ *  \param instance instance of at command 
+ *  \param cmd name of at command
+ *  \param handlers handler functions of corresponding at command
+ * */
 void at_cmd_insert(at_cmd_class_t * instance, const char * cmd, at_cmd_handler_t * handlers);
+
+/*  \brief delete one command from instance
+ *  \param instance instance of at command
+ *  \param cmd name of at command to delete
+ * */
 void at_cmd_delete(at_cmd_class_t * instance, const char * cmd);
+
+/*  \brief lookup at command from instance
+ *  \param instance instance of at command
+ *  \param cmd name of at command to lookup for
+ *  \retval at command lookuped
+ * */
 at_cmd_t * at_cmd_lookup(at_cmd_class_t * instance,const char * cmd);
 /// @} //!< at_command_inherit_method group
 
@@ -103,12 +122,12 @@ at_cmd_t * at_cmd_lookup(at_cmd_class_t * instance,const char * cmd);
  * */
 #define at_cmd_snprintf snprintf
 
-/*  \brief handle at commands[split by '\n'] string
+/*! \brief handle at commands[split by '\n'] string
  *  \param cmds at commands string
  * */
 void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds);
 
-/*  \brief handle at commands from stream
+/*! \brief handle at commands from stream
  *  \parma f at commands characters stream
  * */
 void at_cmd_handle_stream(at_cmd_class_t * instance, FILE * f);

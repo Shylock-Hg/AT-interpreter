@@ -4,15 +4,6 @@
  *  \email tcath2s@gmail.com
  * */
 
-/*  \brief 
- *       |at command prototype      |description|
- *       |:--                       |:--|
- *       |AT+<cmd>                  |execute command without parameters|
- *       |AT+<cmd>=p0[,p1[,p2...[]]]| execute command with parameters|
- *       |AT+<cmd>?                 |query current parameters value|
- *       |AT+<cmd>=?                |query possible parameters value|
- * */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -50,12 +41,6 @@ at_cmd_t * at_cmd_lookup(at_cmd_class_t * instance,const char * cmd){
 }
 
 /* non-portable */
-/*
-#define AT_CMD_PAT_CHECK_PARAM "AT+%[A-Z]%[=?]\n"
-#define AT_CMD_PAT_WITH_PARAM  "AT+%[A-Z]=%[^\n]\n"
-#define AT_CMD_PAT_QUERY_PARAM "AT+%[A-Z]%[?]\n"
-#define AT_CMD_PAT_NO_PARAM    "AT+%[A-Z]\n"
-*/
 #define AT_CMD_PAT "AT+%[A-Z]"
 
 void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
@@ -137,75 +122,7 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 	}else{
 		printf("[warn]:invalid command format!\n");
 	}
-	//char * param = calloc(sizeof(char),instance->at_cmd_param_len);
-	//char temp[10] = {0};
-	/*
-	if(2 == sscanf(cmds,AT_CMD_PAT_CHECK_PARAM,cmd,temp)){
-		printf("[info]:command check parameters\n");
-		at_cmd_t * item = at_cmd_lookup(instance, cmd);
-		if(NULL != item){
-			at_cmd_handler_t * handler = item->value;
-			if(NULL != handler){
-				if(NULL != handler[AT_CMD_INDEX_CHECK_PARAM])
-					handler[AT_CMD_INDEX_CHECK_PARAM](NULL);
-			}else
-				printf("[warn]:unimplement function check parameter\n");
-		}else{
-			printf("[warn1]:unregister command-`%s`!\n",cmd);
-		}
-	
-	}
-	else if(2 == sscanf(cmds,AT_CMD_PAT_WITH_PARAM,cmd,param)){
-		printf("[info]:command with parameters\n");
-		at_cmd_t * item = at_cmd_lookup(instance, cmd);
-		if(NULL != item){
-			at_cmd_handler_t * handler = item->value;
-			if(NULL != handler){
-				if(NULL != handler[AT_CMD_INDEX_WITH_PARAM])
-					handler[AT_CMD_INDEX_WITH_PARAM](param);
-			}else
-				printf("[warn]:unimplement function with parameter\n");
-		}else{
-			printf("[warn0]:unregister command-`%s`!\n",cmd);
-		}
-
-	}
-	else if(2 == sscanf(cmds,AT_CMD_PAT_QUERY_PARAM,cmd,temp)){
-		printf("[info]:command query parameters\n");
-		at_cmd_t * item = at_cmd_lookup(instance, cmd);
-		if(NULL != item){
-			at_cmd_handler_t * handler = item->value;
-			if(NULL != handler){
-				if(NULL != handler[AT_CMD_INDEX_QUERY_PARAM])
-					handler[AT_CMD_INDEX_QUERY_PARAM](NULL);
-			}else
-				printf("[warn]:unimplement function query parameter\n");
-		}else{
-			printf("[warn2]:unregister command-`%s`!\n",cmd);
-		}
-	
-	}
-	else if(1 == sscanf(cmds,AT_CMD_PAT_NO_PARAM,cmd)){
-		printf("[info]:command without parameters\n");
-		at_cmd_t * item = at_cmd_lookup(instance, cmd);
-		if(NULL != item){
-			at_cmd_handler_t * handler = item->value;
-			if(NULL != handler){
-				if(NULL != handler[AT_CMD_INDEX_CHECK_PARAM])
-					handler[AT_CMD_INDEX_CHECK_PARAM](NULL);
-			}else
-				printf("[warn]:unimplement function no parameter\n");
-		}else{
-			printf("[warn3]:unregister command-`%s`!\n",cmd);
-		}
-	
-	}
-	else{
-		printf("[warn]:invalid format at command-`%s`\n",cmds);
-	}
-	*/
 	free(cmd);
-	//free(param);
 	
 	at_cmd_handle_str(instance, delimiter+strlen(instance->delimiter));
 }
