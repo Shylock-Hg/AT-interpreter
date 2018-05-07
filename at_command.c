@@ -130,7 +130,7 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 void at_cmd_handle_stream(at_cmd_class_t * instance, const char * file){
 	FILE * stream = fopen(file,"r");
 
-	char * buffer[AT_CMD_PARAM_MAX_LEN] = {0};
+	char buffer[AT_CMD_PARAM_MAX_LEN] = {0};
 	while(NULL != fgets((char*)buffer, sizeof(buffer), stream)){
 		at_cmd_handle_str(instance, (char*)buffer);
 	}
