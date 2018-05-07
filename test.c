@@ -64,10 +64,8 @@ int main(int argc, char * argv[]){
 */
 
 	//< handle file steam input
-	FILE * f = fopen("test.at","r");
-	at_cmd_handle_stream(instance, f);
+	at_cmd_handle_stream(instance, "test.at");
 
-	fclose(f);
 	at_cmd_class_release(instance);
 
 	return 0;

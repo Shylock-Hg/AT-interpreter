@@ -130,7 +130,7 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds);
 /*! \brief handle at commands from stream
  *  \parma f at commands characters stream
  * */
-void at_cmd_handle_stream(at_cmd_class_t * instance, FILE * f);
+void at_cmd_handle_stream(at_cmd_class_t * instance, const char * file);
 
 /// @}  //!< at_command_extend_method group
 
