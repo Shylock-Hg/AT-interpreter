@@ -51,7 +51,7 @@ typedef int (*at_cmd_handler_t)(const char *);
  * */
 typedef hash_t at_cmd_t;  //!< key,value,next
 
-//< hash value size - 4 at command callback function pointer
+//< hash value - 4 at command callback function pointer
 #define AT_CMD_HASH_VALUE_COUNT 4
 #define AT_CMD_HASH_VALUE_SIZE  (sizeof(at_cmd_handler_t)*AT_CMD_HASH_VALUE_COUNT)
 
@@ -132,7 +132,9 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds);
  * */
 void at_cmd_handle_stream(at_cmd_class_t * instance, const char * file);
 
-void at_cmd_load_tab();
+/*
+void at_cmd_load_tab(at_cmd_class_t * instance, at_cmd_handler_t * handler[AT_CMD_HASH_VALUE_COUNT], size_t cmd_count);
+*/
 
 /// @}  //!< at_command_extend_method group
 

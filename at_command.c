@@ -147,3 +147,8 @@ void at_cmd_handle_stream(at_cmd_class_t * instance, const char * file){
 	fclose(stream);
 }
 
+/*
+void at_cmd_load_tab(at_cmd_class_t * instance, at_cmd_handler_t * handler[AT_CMD_HASH_VALUE_COUNT]){
+
+}
+*/
