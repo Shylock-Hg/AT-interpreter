@@ -56,7 +56,7 @@ typedef hash_t at_cmd_t;  //!< key,value,next
 #define HASH_VALUE_SIZE  (sizeof(at_cmd_handler_t)*HASH_VALUE_COUNT)
 
 //#define AT_CMD_MAX_LEN       20  //!< at command name string length
-#define AT_CMD_PARAM_MAX_LEN 520  //!< at command parameter string length
+//#define AT_CMD_PARAM_MAX_LEN 520  //!< at command parameter string length
 
 /*! \brief at command class based on hash class
  *         - array the hash array(hash * [])

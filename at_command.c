@@ -18,6 +18,9 @@ at_cmd_class_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_
 	at_cmd_instance->hash_instance = hash_instance;
 
 	at_cmd_instance->at_cmd_len    = at_cmd_len;
+
+	at_cmd_instance->at_cmd_param_len = at_cmd_param_len;
+
 	strncpy(at_cmd_instance->delimiter,delimiter,sizeof(at_cmd_instance->delimiter));
 
 	return at_cmd_instance;
@@ -135,8 +138,9 @@ void at_cmd_handle_stream(at_cmd_class_t * instance, const char * file){
 		return;
 	}
 
-	char buffer[AT_CMD_PARAM_MAX_LEN] = {0};
-	while(NULL != fgets((char*)buffer, sizeof(buffer), stream)){
+	//char buffer[AT_CMD_PARAM_MAX_LEN+AT_CMD_MAX_LEN+2] = {0};
+	char * buffer = calloc(sizeof(char), instance->at_cmd_len+instance->at_cmd_param_len+2);
+	while(NULL != fgets(buffer, instance->at_cmd_len+instance->at_cmd_param_len+2, stream)){
 		at_cmd_handle_str(instance, (char*)buffer);
 	}
 

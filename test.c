@@ -8,10 +8,10 @@
 
 #include "at_command.h"
 
-#define AT_CMD_MAX_LEN       20
-#define AT_CMD_MAX_PARAM_LEN 512
-#define AT_CMD_DELIMITER     "\n"
-#define HASH_TAB_SIZE        100
+#define TEST_AT_CMD_MAX_LEN       20
+#define TEST_AT_CMD_MAX_PARAM_LEN 512
+#define TEST_AT_CMD_DELIMITER     "\n"
+#define TEST_HASH_TAB_SIZE        100
 
 #define UNUSED(x) (void)(x)
 
@@ -46,8 +46,8 @@ int main(int argc, char * argv[]){
 	at_cmd_handler_t handlers[HASH_VALUE_COUNT] = {at_cmd_hello_handler0,
 		at_cmd_hello_handler1,NULL,at_cmd_hello_handler3};
 
-	at_cmd_class_t * instance = at_cmd_class_new(HASH_TAB_SIZE,
-			AT_CMD_MAX_LEN,AT_CMD_MAX_PARAM_LEN,AT_CMD_DELIMITER);
+	at_cmd_class_t * instance = at_cmd_class_new(TEST_HASH_TAB_SIZE,
+			TEST_AT_CMD_MAX_LEN,TEST_AT_CMD_MAX_PARAM_LEN,TEST_AT_CMD_DELIMITER);
 
 	at_cmd_insert(instance,TEST_AT_CMD_HELLO,handlers);
 

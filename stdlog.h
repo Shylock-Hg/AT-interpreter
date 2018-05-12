@@ -62,7 +62,7 @@ void println_buf(uint8_t buf[], size_t len);
  *  \param buf buffer pointer 
  *  \param len buffer length
  * */
-#define printf_buf_DBG(level,buf,len) do{\
+#define println_buf_DBG(level,buf,len) do{\
 		printf(level ":" __FILE__ "-" "%u" ":" DBG_TYPE_BIN ":",__LINE__);\
 		println_buf((uint8_t*)buf,len);\
 	}while(0);
