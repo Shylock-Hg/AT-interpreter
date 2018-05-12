@@ -43,7 +43,7 @@ int at_cmd_hello_handler3(const char * parameter){
 
 int main(int argc, char * argv[]){
 	//< create at parser instance
-	at_cmd_handler_t handlers[HASH_VALUE_COUNT] = {at_cmd_hello_handler0,
+	at_cmd_handler_t handlers[AT_CMD_HASH_VALUE_COUNT] = {at_cmd_hello_handler0,
 		at_cmd_hello_handler1,NULL,at_cmd_hello_handler3};
 
 	at_cmd_class_t * instance = at_cmd_class_new(TEST_HASH_TAB_SIZE,
