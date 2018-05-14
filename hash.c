@@ -4,6 +4,7 @@
  *  \email tcath2s@gmail.com
  * */
 
+#include <assert.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
@@ -54,7 +55,8 @@ struct hash_class * hash_new(const size_t HASH_TAB_SIZE){
 }
 
 void hash_release(struct hash_class * instance){
-	if(NULL == instance)
+	assert(NULL != instance && NULL != instance->array);
+	if(NULL == instance || NULL == instance->array)
 		return;
 	//!< free list
 	/*
@@ -93,7 +95,8 @@ void hash_release(struct hash_class * instance){
 }
 
 void hash_insert(const struct hash_class * const instance , const char * key, const void * value, const size_t value_size){
-	if(NULL == instance)
+	assert(NULL != instance && NULL != instance->array && NULL != key && NULL != value);
+	if(NULL == instance || NULL == instance->array || NULL == key || NULL == value)
 		return;
 	//< find hash table index
 	uintptr_t index = hash(key,instance->hash_tab_size);
@@ -154,7 +157,8 @@ void hash_insert(const struct hash_class * const instance , const char * key, co
 }
 
 void hash_delete(const struct hash_class * const instance, const char * key){
-	if(NULL == instance)
+	assert(NULL != instance && NULL != instance->array && NULL != key);
+	if(NULL == instance || NULL == instance->array || NULL == key)
 		return;
 	//< get index of key string
 	uintptr_t index = hash(key,instance->hash_tab_size);
@@ -210,7 +214,8 @@ void hash_pop(struct hash_class * instance){
 */
 
 struct hash * hash_lookup(const struct hash_class * const instance, const char * key){
-	if(NULL == instance || NULL == instance->array)
+	assert(NULL != instance && NULL != instance->array && NULL != key);
+	if(NULL == instance || NULL == instance->array || NULL == key)
 		return NULL;
 
 	uintptr_t index = hash(key,instance->hash_tab_size);
