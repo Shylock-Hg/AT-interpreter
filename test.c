@@ -10,7 +10,7 @@
 
 #define TEST_AT_CMD_MAX_LEN       20
 #define TEST_AT_CMD_MAX_PARAM_LEN 512
-#define TEST_AT_CMD_DELIMITER     "\n"
+#define TEST_AT_CMD_DELIMITER     '\n'
 #define TEST_HASH_TAB_SIZE        100
 
 #define UNUSED(x) (void)(x)

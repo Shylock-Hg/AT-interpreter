@@ -11,7 +11,7 @@
 #include "stdlog.h"
 #include "at_command.h"
 
-at_cmd_class_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_t at_cmd_param_len, char * delimiter){
+at_cmd_class_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_t at_cmd_param_len, char delimiter){
 	at_cmd_class_t * at_cmd_instance = malloc(sizeof(at_cmd_class_t));
 
 	hash_class_t * hash_instance = hash_new(HASH_TAB_SIZE);
@@ -21,7 +21,8 @@ at_cmd_class_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_
 
 	at_cmd_instance->at_cmd_param_len = at_cmd_param_len;
 
-	strncpy(at_cmd_instance->delimiter,delimiter,sizeof(at_cmd_instance->delimiter));
+	//strncpy(at_cmd_instance->delimiter,delimiter,sizeof(at_cmd_instance->delimiter));
+	at_cmd_instance->delimiter = delimiter;
 
 	return at_cmd_instance;
 }
@@ -51,7 +52,7 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 	if('\0' == cmds[0])
 		return;
 
-	char * delimiter = strstr(cmds,instance->delimiter);
+	char * delimiter = strchr(cmds,instance->delimiter);
 	if(NULL == delimiter)
 		return;
 
@@ -128,7 +129,7 @@ void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds){
 	}
 	free(cmd);
 	
-	at_cmd_handle_str(instance, delimiter+strlen(instance->delimiter));
+	at_cmd_handle_str(instance, delimiter+sizeof(instance->delimiter));
 }
 
 void at_cmd_handle_stream(at_cmd_class_t * instance, const char * file){
