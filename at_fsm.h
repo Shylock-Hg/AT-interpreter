@@ -61,7 +61,7 @@ at_cmd_xrecord_queue_t * at_cmd_FSM_gen_xrecord_queue_4_record(at_cmd_context_t 
 /*! \brief log infomation of FSM xrecord queue
  *  \param xrecords xrecord queue
  * */
-void at_cmd_FSM_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords);
+void at_cmd_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords);
 
 /*! \brief execute a at command by `at command record queue` and `at command register table`
  * */

@@ -179,6 +179,7 @@ static enum at_cmd_FSM_state at_cmd_FSM_TEST_OR_SET_handler(
 	if('?' == c){  //!< test
 		return AT_CMD_FSM_STATE_TEST;
 	}else{  //!< set
+		strnachr(xrecord->param, sizeof(xrecord->param), c);
 		return AT_CMD_FSM_STATE_SET;
 	}
 }
@@ -344,7 +345,7 @@ at_cmd_xrecord_queue_t * at_cmd_FSM_gen_xrecord_queue_4_record(at_cmd_context_t 
 	return xrecords;
 }
 
-void at_cmd_FSM_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords){
+void at_cmd_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords){
 	assert(xrecords);
 
 	at_cmd_xrecord_node_t * node = xrecords->_head;
@@ -392,7 +393,7 @@ void at_cmd_execute_script(at_cmd_context_t * context, const char * file){
 	while(NULL != fgets(buffer, context->at_cmd_len + context->at_cmd_param_len + 47, stream)){
 		at_cmd_xrecord_queue_t * xrecords = at_cmd_FSM_gen_xrecord_queue_4_record(context, buffer);
 
-		//at_cmd_FSM_xrecord_queue_log(xrecords);
+		//at_cmd_xrecord_queue_log(xrecords);
 
 		at_cmd_execute(xrecords, context);
 		
