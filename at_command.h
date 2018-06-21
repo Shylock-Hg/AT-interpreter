@@ -73,13 +73,13 @@ typedef hash_t at_cmd_t;  //!< key,value,next
  *         - array the hash array(hash * [])
  *         - hash_tab_size the count of hash table array(size_t)
 */
-//typedef hash_class_t at_cmd_class_t;
-typedef struct at_cmd_class {
+//typedef hash_class_t at_cmd_context_t;
+typedef struct at_cmd_context {
 	hash_class_t * hash_instance;  //!< array,hash_tab_size
 	size_t at_cmd_len;  //!< max length of at command name
 	size_t at_cmd_param_len;
 	char delimiter;  //!< at command delimiter
-} at_cmd_class_t;
+} at_cmd_context_t;
 
 /// @}  //!< at_command_prototype group
 
@@ -93,32 +93,32 @@ typedef struct at_cmd_class {
  *  \param at_cmd_param_len length of at command string
  *  \param delimiter delimiter of at command 
  * */
-at_cmd_class_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_t at_cmd_param_len, char delimiter);
+at_cmd_context_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_t at_cmd_param_len, char delimiter);
 
 /*  \brief release at command object
  *  \param instance instance of at command 
  * */
-void at_cmd_class_release(at_cmd_class_t * instance);
+void at_cmd_class_release(at_cmd_context_t * instance);
 
 /*  \brief insert one at command to instance
  *  \param instance instance of at command 
  *  \param cmd name of at command
  *  \param handlers handler functions of corresponding at command
  * */
-void at_cmd_insert(at_cmd_class_t * instance, const char * cmd, at_cmd_handler_t * handlers);
+void at_cmd_insert(at_cmd_context_t * instance, const char * cmd, at_cmd_handler_t * handlers);
 
 /*  \brief delete one command from instance
  *  \param instance instance of at command
  *  \param cmd name of at command to delete
  * */
-void at_cmd_delete(at_cmd_class_t * instance, const char * cmd);
+void at_cmd_delete(at_cmd_context_t * instance, const char * cmd);
 
 /*  \brief lookup at command from instance
  *  \param instance instance of at command
  *  \param cmd name of at command to lookup for
  *  \retval at command lookuped
  * */
-at_cmd_t * at_cmd_lookup(at_cmd_class_t * instance,const char * cmd);
+at_cmd_t * at_cmd_lookup(at_cmd_context_t * instance,const char * cmd);
 /// @} //!< at_command_inherit_method group
 
 ///! \defgroup at_command_extend_method
@@ -136,15 +136,15 @@ at_cmd_t * at_cmd_lookup(at_cmd_class_t * instance,const char * cmd);
 /*! \brief handle at commands[split by '\n'] string
  *  \param cmds at commands string
  * */
-void at_cmd_handle_str(at_cmd_class_t * instance, const char * cmds);
+void at_cmd_handle_str(at_cmd_context_t * instance, const char * cmds);
 
 /*! \brief handle at commands from stream
  *  \parma f at commands characters stream
  * */
-void at_cmd_handle_stream(at_cmd_class_t * instance, const char * file);
+void at_cmd_handle_stream(at_cmd_context_t * instance, const char * file);
 
 /*
-void at_cmd_load_tab(at_cmd_class_t * instance, at_cmd_handler_t * handler[AT_CMD_HASH_VALUE_COUNT], size_t cmd_count);
+void at_cmd_load_tab(at_cmd_context_t * instance, at_cmd_handler_t * handler[AT_CMD_HASH_VALUE_COUNT], size_t cmd_count);
 */
 
 /// @}  //!< at_command_extend_method group

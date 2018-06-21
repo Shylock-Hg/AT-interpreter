@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "at_command.h"
+#include "at_fsm.h"
 
 #define TEST_AT_CMD_MAX_LEN       20
 #define TEST_AT_CMD_MAX_PARAM_LEN 512
@@ -42,14 +43,14 @@ int at_cmd_hello_handler3(const char * parameter){
 /********** test at commands **********/
 
 int main(int argc, char * argv[]){
-	//< create at parser instance
+	//< create at parser context
 	at_cmd_handler_t handlers[AT_CMD_HASH_VALUE_COUNT] = {at_cmd_hello_handler0,
 		at_cmd_hello_handler1,NULL,at_cmd_hello_handler3};
 
-	at_cmd_class_t * instance = at_cmd_class_new(TEST_HASH_TAB_SIZE,
+	at_cmd_context_t * context = at_cmd_class_new(TEST_HASH_TAB_SIZE,
 			TEST_AT_CMD_MAX_LEN,TEST_AT_CMD_MAX_PARAM_LEN,TEST_AT_CMD_DELIMITER);
 
-	at_cmd_insert(instance,TEST_AT_CMD_HELLO,handlers);
+	at_cmd_insert(context,TEST_AT_CMD_HELLO,handlers);
 
 /*
         //< handle standard input
@@ -57,16 +58,20 @@ int main(int argc, char * argv[]){
 	while(1){
 		printf("[info]:please input command :\n");
 		scanf("%s",cmd);
-		strcat(cmd,instance->delimiter);
-		at_cmd_handle_str(instance,cmd);
+		strcat(cmd,context->delimiter);
+		at_cmd_handle_str(context,cmd);
 
 	}
 */
 
 	//< handle file steam input
-	at_cmd_handle_stream(instance, "test.at");
+	//at_cmd_handle_stream(context, "test.at");
 
-	at_cmd_class_release(instance);
+	//at_cmd_class_release(context);
+	//
+	//
+
+	at_cmd_execute_script(context, "test.at");
 
 	return 0;
 }

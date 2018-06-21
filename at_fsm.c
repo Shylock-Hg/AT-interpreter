@@ -7,17 +7,23 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <stdio.h>
 
 #include "at_fsm.h"
+#include "stdlog.h"
 
 
-static at_cmd_record_t * at_cmd_record_new(const char * name , const char * param, enum AT_CMD_INDEX type);
-static void at_cmd_record_release(at_cmd_record_t * record);
+static at_cmd_xrecord_t * at_cmd_xrecord_new(const char * name , 
+		const char * param, enum AT_CMD_INDEX type);
+static void at_cmd_xrecord_release(at_cmd_xrecord_t * record);
+static void at_cmd_xrecord_deinit(at_cmd_xrecord_t * xrecord);
 
 
 /*! \brief handler function prototype of FSM state handler
  * */
-typedef enum at_cmd_FSM_state (*at_cmd_FSM_handler_t)(at_cmd_record_t * record, const char c);
+typedef enum at_cmd_FSM_state (*at_cmd_FSM_handler_t)(
+		at_cmd_context_t * context, at_cmd_xrecord_t * record, const char c);
 
 /*! \brief at command FSM object
  *
@@ -32,89 +38,215 @@ typedef struct at_cmd_FSM {
  *  \param c input character
  *  \retval next state or negtive error number
  * */
-static enum at_cmd_FSM_state at_cmd_FSM_start_handler(at_cmd_record_t * record, const char c){
+static enum at_cmd_FSM_state at_cmd_FSM_start_handler(
+		at_cmd_context_t * context, at_cmd_xrecord_t * xrecord, const char c){
+	assert(context);
+	assert(xrecord);
 
-	return 0;
+	if('A' == c){
+		return AT_CMD_FSM_STATE_A;
+	}else{  //!< match fail
+		return -1; //AT_CMD_FSM_STATE_START;
+	}
+
 }
 
-/*! \brief parse input character to record structure
- *  \param record the command record structure
+/*! \brief parse input character to xrecord structure
+ *  \param xrecord the command xrecord structure
  *  \param c input character
  *  \retval next state or negtive error number
  * */
-static enum at_cmd_FSM_state at_cmd_FSM_A_handler(at_cmd_record_t * record, const char c){
+static enum at_cmd_FSM_state at_cmd_FSM_A_handler(
+		at_cmd_context_t * context, at_cmd_xrecord_t * xrecord, const char c){
+	assert(context);
+	assert(xrecord);
 
-	return 0;
+	if('T' == c){
+		return AT_CMD_FSM_STATE_T;
+	}else{  //!< match fail
+		return -1; //AT_CMD_FSM_STATE_START;
+	}
 }
 
-/*! \brief parse input character to record structure
- *  \param record the command record structure
+/*! \brief parse input character to xrecord structure
+ *  \param xrecord the command xrecord structure
  *  \param c input character
  *  \retval next state or negtive error number
  * */
-static enum at_cmd_FSM_state at_cmd_FSM_T_handler(at_cmd_record_t * record, const char c){
+static enum at_cmd_FSM_state at_cmd_FSM_T_handler(
+		at_cmd_context_t * context, at_cmd_xrecord_t * xrecord, const char c){
+	assert(context);
+	assert(xrecord);
 
-	return 0;
+	if('+' == c){
+		return AT_CMD_FSM_STATE_PLUS;
+	}else{  //!< match fail
+		return -1; //AT_CMD_FSM_STATE_START;
+	}
 }
 
-/*! \brief parse input character to record structure
- *  \param record the command record structure
+/*! \brief append a character to string buffer
+ *  \param str string to append character
+ *  \param c character to append to string
+ *  \note don't check string buffer size, not secure
+ * */
+//static void strachr(char * str, char c){
+
+//}
+
+/*! \brief append a character to string buffer
+ *  \param str string to append a character
+ *  \param len size of string buffer
+ *  \param c character to append to string
+ *  \retval the string changed , NULL for fail
+ * */
+static char * strnachr(char * str, size_t len, char c){
+	assert(str);
+
+	size_t lenstr = strlen(str);
+
+	if(lenstr+1 >= len)  //!< no available buffer memory
+		return NULL;
+
+	//< append a character
+	str[lenstr] = c;
+	str[lenstr+1] = '\0';
+
+	return str;
+}
+
+/*! \brief parse input character to xrecord structure
+ *  \param xrecord the command xrecord structure
  *  \param c input character
  *  \retval next state or negtive error number
  * */
-static enum at_cmd_FSM_state at_cmd_FSM_PLUS_handler(at_cmd_record_t * record, const char c){
+static enum at_cmd_FSM_state at_cmd_FSM_PLUS_handler(
+		at_cmd_context_t * context, at_cmd_xrecord_t * xrecord, const char c){
+	assert(context);
+	assert(xrecord);
 
-	return 0;
+	if(isupper(c)){  //!< at command name
+		strnachr(xrecord->name, sizeof(xrecord->name), c);
+		return AT_CMD_FSM_STATE_PLUS;
+	}else if('=' == c){  //!< test or set
+		return AT_CMD_FSM_STATE_TEST_OR_SET;
+	}else if('?' == c){  //!< query
+		return AT_CMD_FSM_STATE_QUERY;
+	}else if(';' == c){  //!< set command end
+		xrecord->type = AT_CMD_INDEX_NO_PARAM;
+		return AT_CMD_FSM_STATE_T;
+	}else if(context->delimiter == c){  //!< set command end
+		xrecord->type = AT_CMD_INDEX_NO_PARAM;
+		return AT_CMD_FSM_STATE_START;
+	}else{  //!< match fail
+		memset(xrecord->name, 0x00, sizeof(xrecord->name));
+		return -1; //AT_CMD_FSM_STATE_START;
+	}
 }
 
-/*! \brief parse input character to record structure
- *  \param record the command record structure
+/*! \brief parse input character to xrecord structure
+ *  \param xrecord the command xrecord structure
  *  \param c input character
  *  \retval next state or negtive error number
  * */
-static enum at_cmd_FSM_state at_cmd_FSM_QUERY_handler(at_cmd_record_t * record, const char c){
+static enum at_cmd_FSM_state at_cmd_FSM_QUERY_handler(
+		at_cmd_context_t * context, at_cmd_xrecord_t * xrecord, const char c){
+	assert(context);
+	assert(xrecord);
 
-	return 0;
+	if(';' == c){
+		xrecord->type = AT_CMD_INDEX_QUERY_PARAM;
+		return AT_CMD_FSM_STATE_T;
+	}else if(context->delimiter == c){
+		xrecord->type = AT_CMD_INDEX_QUERY_PARAM;
+		return AT_CMD_FSM_STATE_START;
+	}else{  //!< match fail
+		memset(xrecord->name, 0x00, sizeof(xrecord->name));
+		return -1;
+	}
 }
 
-/*! \brief parse input character to record structure
- *  \param record the command record structure
+/*! \brief parse input character to xrecord structure
+ *  \param xrecord the command xrecord structure
  *  \param c input character
  *  \retval next state or negtive error number
  * */
-static enum at_cmd_FSM_state at_cmd_FSM_TEST_OR_SET_handler(at_cmd_record_t * record, const char c){
+static enum at_cmd_FSM_state at_cmd_FSM_TEST_OR_SET_handler(
+		at_cmd_context_t * context, at_cmd_xrecord_t * xrecord, const char c){
+	assert(context);
+	assert(xrecord);
 
-	return 0;
+	if('?' == c){  //!< test
+		return AT_CMD_FSM_STATE_TEST;
+	}else{  //!< set
+		return AT_CMD_FSM_STATE_SET;
+	}
 }
 
-/*! \brief parse input character to record structure
- *  \param record the command record structure
+/*! \brief parse input character to xrecord structure
+ *  \param xrecord the command xrecord structure
  *  \param c input character
  *  \retval next state or negtive error number
  * */
-static enum at_cmd_FSM_state at_cmd_FSM_TEST_handler(at_cmd_record_t * record, const char c){
+static enum at_cmd_FSM_state at_cmd_FSM_TEST_handler(
+		at_cmd_context_t * context, at_cmd_xrecord_t * xrecord, const char c){
+	assert(context);
+	assert(xrecord);
 
-	return 0;
+	if(';' == c){
+		xrecord->type = AT_CMD_INDEX_CHECK_PARAM;
+		return AT_CMD_FSM_STATE_T;
+	}else if(context->delimiter == c){
+		xrecord->type = AT_CMD_INDEX_CHECK_PARAM;
+		return AT_CMD_FSM_STATE_START;
+	}else{  //!< match fail
+		memset(xrecord->name, 0x00, sizeof(xrecord->name));
+		return -1;
+	}
 }
 
-/*! \brief parse input character to record structure
- *  \param record the command record structure
+/*! \brief parse input character to xrecord structure
+ *  \param xrecord the command xrecord structure
  *  \param c input character
  *  \retval next state or negtive error number
  * */
-static enum at_cmd_FSM_state at_cmd_FSM_SET_handler(at_cmd_record_t * record, const char c){
+static enum at_cmd_FSM_state at_cmd_FSM_SET_handler(
+		at_cmd_context_t * context, at_cmd_xrecord_t * xrecord, const char c){
+	assert(context);
+	assert(xrecord);
 
-	return 0;
+	if(';' == c){
+		xrecord->type = AT_CMD_INDEX_WITH_PARAM;
+		return AT_CMD_FSM_STATE_T;
+	}else if(context->delimiter == c){
+		xrecord->type = AT_CMD_INDEX_WITH_PARAM;
+		return AT_CMD_FSM_STATE_START;
+	}else if('"' == c){
+		strnachr(xrecord->param, sizeof(xrecord->param), c);
+		return AT_CMD_FSM_STATE_PARAM;
+	}else{
+		strnachr(xrecord->param, sizeof(xrecord->param), c);
+		return AT_CMD_FSM_STATE_SET;
+	}
 }
 
-/*! \brief parse input character to record structure
- *  \param record the command record structure
+/*! \brief parse input character to xrecord structure
+ *  \param xrecord the command xrecord structure
  *  \param c input character
  *  \retval next state or negtive error number
  * */
-static enum at_cmd_FSM_state at_cmd_FSM_PARAM_handler(at_cmd_record_t * record, const char c){
+static enum at_cmd_FSM_state at_cmd_FSM_PARAM_handler(
+		at_cmd_context_t * context, at_cmd_xrecord_t * xrecord, const char c){
+	assert(context);
+	assert(xrecord);
 
-	return 0;
+	if('"' == c){
+		strnachr(xrecord->param, sizeof(xrecord->param), c);
+		return AT_CMD_FSM_STATE_SET;
+	}else{
+		strnachr(xrecord->param, sizeof(xrecord->param), c);
+		return AT_CMD_FSM_STATE_PARAM;
+	}
 }
 
 static at_cmd_FSM_t FSM[AT_CMD_FSM_STATE_COUNT] = {
@@ -130,31 +262,62 @@ static at_cmd_FSM_t FSM[AT_CMD_FSM_STATE_COUNT] = {
 };
 
 
-int at_cmd_FSM_parse_record(at_cmd_record_queue_t * queue_record, const char * record){
-	assert(queue_record);
+static const char * at_cmd_state_2_str(at_cmd_FSM_state_t state){
+	static const char * at_cmd_state_str[] = {
+		"AT_CMD_FSM_STATE_START",
+		"AT_CMD_FSM_STATE_A",
+		"AT_CMD_FSM_STATE_T",
+		"AT_CMD_FSM_STATE_PLUS",
+		"AT_CMD_FSM_STATE_QUERY",
+		"AT_CMD_FSM_STATE_TEST_OR_SET",
+		"AT_CMD_FSM_STATE_TEST",
+		"AT_CMD_FSM_STATE_SET",
+		"AT_CMD_FSM_STATE_PARAM"
+	};
+
+	if(sizeof(at_cmd_state_str) <= state)
+		return NULL;
+
+	return at_cmd_state_str[state];
+}
+
+
+int at_cmd_FSM_parse_record(at_cmd_context_t * context, at_cmd_xrecord_queue_t * xrecords, const char * record){
+	assert(xrecords);
 	assert(record);
-	if(NULL == queue_record || NULL == record)
+	if(NULL == xrecords || NULL == record)
 		return -1;
 
 	const char * str = record;
 	enum at_cmd_FSM_state state = AT_CMD_FSM_STATE_START;
 	//< \TODO create a record structure with no field
-	at_cmd_record_t * xrecord = at_cmd_record_new(NULL, NULL, 0);
+	at_cmd_xrecord_t * xrecord = at_cmd_xrecord_new(NULL, NULL, 0);
+	at_cmd_xrecord_deinit(xrecord);
 
 	while('\0' != *str){
+		//printf_DBG(DBG_LEVEL_LOG, "state-`%s`\n", at_cmd_state_2_str(state));
+
 		enum at_cmd_FSM_state pre_state = state;
-		state = FSM[state].handler(xrecord, *str);
+		state = FSM[state].handler(context, xrecord, *str);
 		//!< return error or out of range
-		if(0 > state || AT_CMD_FSM_STATE_COUNT <= state)  
+		if(0 > state || AT_CMD_FSM_STATE_COUNT <= state){
+			at_cmd_xrecord_release(xrecord);
 			return -1;
+		}
 	
 		if(AT_CMD_FSM_STATE_T == state && AT_CMD_FSM_STATE_A != pre_state){
 			//< \TODO append record to record queue 
-			queue_class_enqueue(queue_record, xrecord);
+			//printf_DBG(DBG_LEVEL_LOG, "xrecord->name=`%s`,xrecord->type=`%d`,xrecord->param=`%s`\n", xrecord->name, xrecord->type, xrecord->param);
+			queue_class_enqueue(xrecords, xrecord);
+			at_cmd_xrecord_deinit(xrecord);
+			//printf_DBG(DBG_LEVEL_LOG, "end of record\n");
 		}
 		if(AT_CMD_FSM_STATE_START == state && AT_CMD_FSM_STATE_START != pre_state){
 			//< \TODO append record to record queue 
-			queue_class_enqueue(queue_record, xrecord);
+			//printf_DBG(DBG_LEVEL_LOG, "xrecord->name=`%s`,xrecord->type=`%d`,xrecord->param=`%s`\n", xrecord->name, xrecord->type, xrecord->param);
+			queue_class_enqueue(xrecords, xrecord);
+			at_cmd_xrecord_deinit(xrecord);
+			//printf_DBG(DBG_LEVEL_LOG, "end of record\n");
 		}
 
 
@@ -162,7 +325,7 @@ int at_cmd_FSM_parse_record(at_cmd_record_queue_t * queue_record, const char * r
 	}
 
 	//< release the xrecord
-	at_cmd_record_release(xrecord);
+	at_cmd_xrecord_release(xrecord);
 
 	if(AT_CMD_FSM_STATE_START != state)  //!< error when parse record
 		return -1;
@@ -170,20 +333,98 @@ int at_cmd_FSM_parse_record(at_cmd_record_queue_t * queue_record, const char * r
 	return 0;
 }
 
-/******************** at command record structure method ********************/
-static at_cmd_record_t * at_cmd_record_new(const char * name , const char * param, enum AT_CMD_INDEX type){
-	at_cmd_record_t * record = malloc(sizeof(at_cmd_record_t));
+at_cmd_xrecord_queue_t * at_cmd_FSM_gen_xrecord_queue_4_record(at_cmd_context_t * context, const char * record){
+	assert(record);
 
-	record->type = type;
-	if(name)
-		strncpy(record->name, name, sizeof(record->name));
-	if(param)
-		strncpy(record->param, param, sizeof(record->param));
+	///< create a xrecord queue
+	at_cmd_xrecord_queue_t * xrecords = queue_class_new(sizeof(at_cmd_xrecord_t));
 
-	return record;
+	at_cmd_FSM_parse_record(context, xrecords, record);
+	
+	return xrecords;
 }
 
-static void at_cmd_record_release(at_cmd_record_t * record){
-	free(record);
+void at_cmd_FSM_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords){
+	assert(xrecords);
+
+	at_cmd_xrecord_node_t * node = xrecords->_head;
+	while(node){
+		at_cmd_xrecord_t * xrecord = node->value;
+		if(xrecord){
+			printf_DBG(DBG_LEVEL_LOG, "xrecord->name=`%s`,xrecord->type=`%d`,xrecord->param=`%s`\n", xrecord->name, xrecord->type, xrecord->param);
+		}
+		
+		node = node->_next;
+	}
+}
+
+void at_cmd_execute(at_cmd_xrecord_queue_t * xrecords, at_cmd_context_t * context){
+	assert(xrecords);
+	assert(context);
+
+	at_cmd_xrecord_node_t * node = queue_class_dequeue(xrecords);
+	at_cmd_xrecord_t * xrecord = NULL;
+	while(NULL != node){
+		xrecord = node->value;
+		if(xrecord){
+			at_cmd_t * item = at_cmd_lookup(context, xrecord->name);
+			if(item){
+				at_cmd_handler_t * handler = item->value;
+				if(handler){
+					if(handler[xrecord->type]){
+						handler[xrecord->type](xrecord->param);
+					}
+				}
+			}
+			
+		}
+
+		//< next xrecord queue node
+		node = queue_class_dequeue(xrecords);
+	}
+}
+
+void at_cmd_execute_script(at_cmd_context_t * context, const char * file){
+	assert(file);
+
+	FILE * stream = fopen(file, "r");
+	char * buffer = malloc(context->at_cmd_len + context->at_cmd_param_len + 47);
+	while(NULL != fgets(buffer, context->at_cmd_len + context->at_cmd_param_len + 47, stream)){
+		at_cmd_xrecord_queue_t * xrecords = at_cmd_FSM_gen_xrecord_queue_4_record(context, buffer);
+
+		//at_cmd_FSM_xrecord_queue_log(xrecords);
+
+		at_cmd_execute(xrecords, context);
+		
+		queue_class_release(xrecords);
+	}
+
+	free(buffer);
+	fclose(stream);
+}
+
+/******************** at command record structure method ********************/
+static at_cmd_xrecord_t * at_cmd_xrecord_new(const char * name , const char * param, enum AT_CMD_INDEX type){
+	at_cmd_xrecord_t * xrecord = malloc(sizeof(at_cmd_xrecord_t));
+
+	xrecord->type = type;
+	if(name)
+		strncpy(xrecord->name, name, sizeof(xrecord->name));
+	if(param)
+		strncpy(xrecord->param, param, sizeof(xrecord->param));
+
+	return xrecord;
+}
+
+static void at_cmd_xrecord_release(at_cmd_xrecord_t * xrecord){
+	free(xrecord);
+}
+
+static void at_cmd_xrecord_deinit(at_cmd_xrecord_t * xrecord){
+	assert(xrecord);
+
+	memset(xrecord->name, 0x00, sizeof(xrecord->name));
+	memset(xrecord->param, 0x00, sizeof(xrecord->param));
+	xrecord->type = 0;
 }
 
