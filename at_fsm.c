@@ -308,17 +308,13 @@ int at_cmd_FSM_parse_record(at_cmd_context_t * context, at_cmd_xrecord_queue_t *
 	
 		if(AT_CMD_FSM_STATE_T == state && AT_CMD_FSM_STATE_A != pre_state){
 			//< \TODO append record to record queue 
-			//printf_DBG(DBG_LEVEL_LOG, "xrecord->name=`%s`,xrecord->type=`%d`,xrecord->param=`%s`\n", xrecord->name, xrecord->type, xrecord->param);
 			queue_class_enqueue(xrecords, xrecord);
 			at_cmd_xrecord_deinit(xrecord);
-			//printf_DBG(DBG_LEVEL_LOG, "end of record\n");
 		}
 		if(AT_CMD_FSM_STATE_START == state && AT_CMD_FSM_STATE_START != pre_state){
 			//< \TODO append record to record queue 
-			//printf_DBG(DBG_LEVEL_LOG, "xrecord->name=`%s`,xrecord->type=`%d`,xrecord->param=`%s`\n", xrecord->name, xrecord->type, xrecord->param);
 			queue_class_enqueue(xrecords, xrecord);
 			at_cmd_xrecord_deinit(xrecord);
-			//printf_DBG(DBG_LEVEL_LOG, "end of record\n");
 		}
 
 
@@ -334,7 +330,9 @@ int at_cmd_FSM_parse_record(at_cmd_context_t * context, at_cmd_xrecord_queue_t *
 	return 0;
 }
 
-at_cmd_xrecord_queue_t * at_cmd_FSM_gen_xrecord_queue_4_record(at_cmd_context_t * context, const char * record){
+at_cmd_xrecord_queue_t * at_cmd_FSM_gen_xrecord_queue_4_record(
+		at_cmd_context_t * context, const char * record){
+
 	assert(record);
 
 	///< create a xrecord queue
@@ -352,7 +350,9 @@ void at_cmd_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords){
 	while(node){
 		at_cmd_xrecord_t * xrecord = node->value;
 		if(xrecord){
-			printf_DBG(DBG_LEVEL_LOG, "xrecord->name=`%s`,xrecord->type=`%d`,xrecord->param=`%s`\n", xrecord->name, xrecord->type, xrecord->param);
+			printf_DBG(DBG_LEVEL_LOG, 
+					"xrecord->name=`%s`,xrecord->type=`%d`,xrecord->param=`%s`\n", 
+					xrecord->name, xrecord->type, xrecord->param);
 		}
 		
 		node = node->_next;
@@ -380,6 +380,8 @@ void at_cmd_execute(at_cmd_xrecord_queue_t * xrecords, at_cmd_context_t * contex
 			
 		}
 
+		//< release the dequeue element
+		queue_class_element_release(xrecords, node);
 		//< next xrecord queue node
 		node = queue_class_dequeue(xrecords);
 	}
