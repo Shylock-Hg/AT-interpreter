@@ -73,6 +73,8 @@ int main(int argc, char * argv[]){
 
 	at_cmd_execute_script(context, "test.at");
 
+	at_cmd_class_release(context);
+
 	return 0;
 }
 
