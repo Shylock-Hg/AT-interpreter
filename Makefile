@@ -1,14 +1,14 @@
 CFLAGS = -std=c99 -Wall
 
+PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d
+
 DIR_BUILD = ./build
 
-PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d
+TARGET = test
 
 SOURCES = $(wildcard *.c)
 
 OBJS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(SOURCES))))
-
-TARGET = test
 
 DEPFILES = $(patsubst %.o, %.d, $(OBJS))
 
