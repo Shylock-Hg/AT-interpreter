@@ -11,13 +11,10 @@
 #include <stdio.h>
 
 #include "at_fsm.h"
+#include "at_xrecord.h"
 #include "stdlog.h"
 
 
-static at_cmd_xrecord_t * at_cmd_xrecord_new(const char * name , 
-		const char * param, enum AT_CMD_INDEX type);
-static void at_cmd_xrecord_release(at_cmd_xrecord_t * record);
-static void at_cmd_xrecord_deinit(at_cmd_xrecord_t * xrecord);
 
 
 /*! \brief handler function prototype of FSM state handler
@@ -404,30 +401,5 @@ void at_cmd_execute_script(at_cmd_context_t * context, const char * file){
 
 	free(buffer);
 	fclose(stream);
-}
-
-/******************** at command record structure method ********************/
-static at_cmd_xrecord_t * at_cmd_xrecord_new(const char * name , const char * param, enum AT_CMD_INDEX type){
-	at_cmd_xrecord_t * xrecord = malloc(sizeof(at_cmd_xrecord_t));
-
-	xrecord->type = type;
-	if(name)
-		strncpy(xrecord->name, name, sizeof(xrecord->name));
-	if(param)
-		strncpy(xrecord->param, param, sizeof(xrecord->param));
-
-	return xrecord;
-}
-
-static void at_cmd_xrecord_release(at_cmd_xrecord_t * xrecord){
-	free(xrecord);
-}
-
-static void at_cmd_xrecord_deinit(at_cmd_xrecord_t * xrecord){
-	assert(xrecord);
-
-	memset(xrecord->name, 0x00, sizeof(xrecord->name));
-	memset(xrecord->param, 0x00, sizeof(xrecord->param));
-	xrecord->type = 0;
 }
 

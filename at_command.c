@@ -45,8 +45,11 @@ at_cmd_t * at_cmd_lookup(at_cmd_context_t * instance,const char * cmd){
 	return hash_lookup(instance->hash_instance,cmd);
 }
 
+
 /* non-portable */
 #define AT_CMD_PAT "AT+%[A-Z]"
+
+/*
 
 void at_cmd_handle_str(at_cmd_context_t * instance, const char * cmds){
 	if('\0' == cmds[0])
@@ -147,9 +150,11 @@ void at_cmd_handle_stream(at_cmd_context_t * instance, const char * file){
 
 	fclose(stream);
 }
+*/
 
 /*
 void at_cmd_load_tab(at_cmd_context_t * instance, at_cmd_handler_t * handler[AT_CMD_HASH_VALUE_COUNT]){
 
 }
 */
+

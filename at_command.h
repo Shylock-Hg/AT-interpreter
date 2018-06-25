@@ -136,12 +136,14 @@ at_cmd_t * at_cmd_lookup(at_cmd_context_t * instance,const char * cmd);
 /*! \brief handle at commands[split by '\n'] string
  *  \param cmds at commands string
  * */
-void at_cmd_handle_str(at_cmd_context_t * instance, const char * cmds);
+//void at_cmd_handle_str(at_cmd_context_t * instance, const char * cmds);
+//!< \note discard in new implement
 
 /*! \brief handle at commands from stream
  *  \parma f at commands characters stream
  * */
-void at_cmd_handle_stream(at_cmd_context_t * instance, const char * file);
+//void at_cmd_handle_stream(at_cmd_context_t * instance, const char * file);
+//!< \note discard in new implement
 
 /*
 void at_cmd_load_tab(at_cmd_context_t * instance, at_cmd_handler_t * handler[AT_CMD_HASH_VALUE_COUNT], size_t cmd_count);
