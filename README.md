@@ -1,8 +1,8 @@
 
-AT-command
+AT-command interpreter
 =========================
 
-A simple AT command library implement based on *FSM* , *list* and *hash looup*.
+A simple AT command library implement based on *FSM*(parse AT-script) , *queue*(AT-notation buffer) and *hash looup*(AT-notation store).
 
 ## overview
 
