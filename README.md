@@ -4,6 +4,8 @@ AT-command interpreter
 
 A simple AT command library implement based on *FSM*(parse AT-script) , *queue*(AT-notation buffer) and *hash looup*(AT-notation store).
 
+[![Build Status](https://travis-ci.org/Shylock-Hg/AT-interpreter.svg?branch=master)](https://travis-ci.org/Shylock-Hg/AT-interpreter)
+
 ## overview
 
 standard record string : "AT+HGABC?;+HGDDD=?;+HGSBD;+HGHIO=1,2,\"hello world!\n\"\n"
