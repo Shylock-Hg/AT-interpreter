@@ -280,7 +280,8 @@ static const char * at_cmd_state_2_str(at_cmd_FSM_state_t state){
 }
 
 
-int at_cmd_FSM_parse_record(at_cmd_context_t * context, at_cmd_xrecord_queue_t * xrecords, const char * record){
+int at_cmd_FSM_parse_record(at_cmd_context_t * context, 
+		at_cmd_xrecord_queue_t * xrecords, const char * record){
 	assert(xrecords);
 	assert(record);
 	if(NULL == xrecords || NULL == record)
@@ -327,17 +328,19 @@ int at_cmd_FSM_parse_record(at_cmd_context_t * context, at_cmd_xrecord_queue_t *
 	return 0;
 }
 
-at_cmd_xrecord_queue_t * at_cmd_FSM_gen_xrecord_queue_4_record(
-		at_cmd_context_t * context, const char * record){
-
+void at_cmd_FSM_gen_xrecord_queue_4_record(
+		at_cmd_context_t * context, at_cmd_xrecord_queue_t * xrecords, 
+		const char * record){
+	assert(context);
+	assert(xrecords);
 	assert(record);
 
 	///< create a xrecord queue
-	at_cmd_xrecord_queue_t * xrecords = queue_class_new(sizeof(at_cmd_xrecord_t));
+	//xrecords = queue_class_new(sizeof(at_cmd_xrecord_t));
 
 	at_cmd_FSM_parse_record(context, xrecords, record);
 	
-	return xrecords;
+	//return xrecords;
 }
 
 void at_cmd_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords){
@@ -348,7 +351,7 @@ void at_cmd_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords){
 		at_cmd_xrecord_t * xrecord = node->value;
 		if(xrecord){
 			printf_DBG(DBG_LEVEL_LOG, 
-					"xrecord->name=`%s`,xrecord->type=`%d`,xrecord->param=`%s`\n", 
+					"xrecord->name=`%s`,xrecord->type=`%d`,	xrecord->param=`%s`\n", 
 					xrecord->name, xrecord->type, xrecord->param);
 		}
 		
@@ -356,7 +359,8 @@ void at_cmd_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords){
 	}
 }
 
-void at_cmd_execute(at_cmd_xrecord_queue_t * xrecords, at_cmd_context_t * context){
+void at_cmd_execute(at_cmd_context_t * context, 
+		at_cmd_xrecord_queue_t * xrecords){
 	assert(xrecords);
 	assert(context);
 
@@ -388,18 +392,37 @@ void at_cmd_execute_script(at_cmd_context_t * context, const char * file){
 	assert(file);
 
 	FILE * stream = fopen(file, "r");
-	char * buffer = malloc(context->at_cmd_len + context->at_cmd_param_len + 47);
-	while(NULL != fgets(buffer, context->at_cmd_len + context->at_cmd_param_len + 47, stream)){
-		at_cmd_xrecord_queue_t * xrecords = at_cmd_FSM_gen_xrecord_queue_4_record(context, buffer);
+	//char * buffer = malloc(context->at_cmd_len + context->at_cmd_param_len + 47);
+	char buffer[1024] = {0};
+	at_cmd_xrecord_queue_t * xrecords = queue_class_new(sizeof(at_cmd_xrecord_t));
+	/*
+	while(NULL != fgets(buffer, 
+			context->at_cmd_len + context->at_cmd_param_len + 47, stream)){
+		at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, buffer);
 
 		//at_cmd_xrecord_queue_log(xrecords);
 
-		at_cmd_execute(xrecords, context);
 		
-		queue_class_release(xrecords);
 	}
+	*/
+	fread(buffer, sizeof(buffer), sizeof(buffer), stream);
+	at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, buffer);
+	at_cmd_execute(context, xrecords);
+	queue_class_release(xrecords);
 
-	free(buffer);
+	//free(buffer);
 	fclose(stream);
+}
+
+void at_cmd_execute_script_string(at_cmd_context_t * context, 
+		const char * script){
+	assert(context);
+	assert(script);
+
+	at_cmd_xrecord_queue_t * xrecords = queue_class_new(sizeof(at_cmd_xrecord_t));
+	at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, script);
+	at_cmd_execute(context, xrecords);
+	queue_class_release(xrecords);
+	
 }
 

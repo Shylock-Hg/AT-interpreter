@@ -52,26 +52,13 @@ int main(int argc, char * argv[]){
 
 	at_cmd_insert(context,TEST_AT_CMD_HELLO,handlers);
 
-/*
-        //< handle standard input
-	//char cmd[200] = {0};
-	while(1){
-		printf("[info]:please input command :\n");
-		scanf("%s",cmd);
-		strcat(cmd,context->delimiter);
-		at_cmd_handle_str(context,cmd);
-
-	}
-*/
-
-	//< handle file steam input
-	//at_cmd_handle_stream(context, "test.at");
-
-	//at_cmd_class_release(context);
-	//
-	//
-
-	at_cmd_execute_script(context, "test.at");
+	//at_cmd_execute_script(context, "test.at");
+	
+	char buffer[1024] = {0};
+	FILE * stream = fopen("test.at", "r");
+	fread(buffer, sizeof(buffer), sizeof(buffer), stream);
+	fclose(stream);
+	at_cmd_execute_script_string(context, buffer);
 
 	at_cmd_class_release(context);
 
