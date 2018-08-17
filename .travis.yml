@@ -3,4 +3,5 @@ compiler : gcc
 os : linux
 script : 
     - make
-    - ./build/test
+    - ./build/test > log
+    - diff log stdlog
