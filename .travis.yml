@@ -8,4 +8,4 @@ script :
     - ./build/test > log
     - diff log stdlog
 after_success:
-    - coveralls --gcov-options='\-lp'
+    - coveralls --exclude=test.c --gcov-options='\-lp'
