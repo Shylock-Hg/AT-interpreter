@@ -10,6 +10,7 @@
 
 #include "inc/at_command.h"
 #include "inc/at_fsm.h"
+#include "inc/at_table.h"
 
 #define TEST_AT_CMD_MAX_LEN       20
 #define TEST_AT_CMD_MAX_PARAM_LEN 512
@@ -75,19 +76,6 @@ int at_cmd_hi_handler3(const char * parameter){
 	return 0;
 }
 
-typedef enum AT_FLAG {
-	AT_FLAG_UNVISIABLE = 1,
-	AT_FLAG_VISIABLE   = (1 << 1),
-} AT_FLAG_T;
-
-typedef struct at_cmd_cb {
-	enum AT_FLAG flag;
-	char * cmd_str;
-	at_cmd_handler_t at_set_handler;
-	at_cmd_handler_t at_read_handler;
-	at_cmd_handler_t at_test_handler;
-	at_cmd_handler_t at_exec_handler;
-} at_cmd_cb_t;
 
 /********** test at commands **********/
 
@@ -113,11 +101,8 @@ int main(int argc, char * argv[]){
 			TEST_AT_CMD_MAX_LEN,TEST_AT_CMD_MAX_PARAM_LEN,TEST_AT_CMD_DELIMITER);
 
 	//< register AT command to context
-	for(int i=0; i<sizeof(at_cmd_table)/sizeof(at_cmd_table[0]); i++){
-		at_cmd_insert(context, at_cmd_table[i].cmd_str, 
-				&(at_cmd_table[i].at_set_handler));
-	}
-
+	at_table_register(context, at_cmd_table, 
+			sizeof(at_cmd_table)/sizeof(at_cmd_table[0]));
 	
 #ifdef REPL
 

@@ -1,11 +1,16 @@
 empty list
-hello!
-hello!
-hello world!
-hello world!
-hello!
-any string
-any string
-hello world!
-hello world!
-hello!
+empty list
+exec hello!
+exec hi!
+set hello world,+HI=hi!
+set hello world!
+read any string
+read any string
+read any string
+exec hello!
+set hello world!
+set hi hahah!
+set hello world!
+exec hello!
+read any string
+exec hi!
