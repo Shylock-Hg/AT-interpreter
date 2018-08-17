@@ -44,10 +44,10 @@ typedef int (*at_cmd_handler_t)(const char *);
 #define AT_CMD_INDEX_CHECK_PARAM 3
 */
 typedef enum AT_CMD_INDEX {
-	AT_CMD_INDEX_NO_PARAM     = 0,
-	AT_CMD_INDEX_WITH_PARAM   = 1,
-	AT_CMD_INDEX_QUERY_PARAM  = 2,
-	AT_CMD_INDEX_CHECK_PARAM  = 3
+	AT_CMD_INDEX_WITH_PARAM   ,  //!< set
+	AT_CMD_INDEX_QUERY_PARAM  ,  //!< read
+	AT_CMD_INDEX_CHECK_PARAM  ,  //!< test
+	AT_CMD_INDEX_NO_PARAM     ,  //!< exec
 } AT_CMD_INDEX_T;
 
 #define AT_CMD_MAX_NAME_LEN  128
