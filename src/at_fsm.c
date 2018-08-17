@@ -10,9 +10,9 @@
 #include <ctype.h>
 #include <stdio.h>
 
-#include "at_fsm.h"
-#include "at_xrecord.h"
-#include "stdlog.h"
+#include "../inc/at_fsm.h"
+#include "../inc/at_xrecord.h"
+#include "../inc/stdlog.h"
 
 
 

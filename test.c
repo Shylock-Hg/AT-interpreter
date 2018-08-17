@@ -6,8 +6,8 @@
 
 #include <string.h>
 
-#include "at_command.h"
-#include "at_fsm.h"
+#include "inc/at_command.h"
+#include "inc/at_fsm.h"
 
 #define TEST_AT_CMD_MAX_LEN       20
 #define TEST_AT_CMD_MAX_PARAM_LEN 512

@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "stdlog.h"
-#include "at_command.h"
+#include "../inc/stdlog.h"
+#include "../inc/at_command.h"
 
 at_cmd_context_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_t at_cmd_param_len, char delimiter){
 	at_cmd_context_t * at_cmd_instance = malloc(sizeof(at_cmd_context_t));

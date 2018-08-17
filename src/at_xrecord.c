@@ -8,7 +8,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "at_xrecord.h"
+#include "../inc/at_xrecord.h"
 
 
 /******************** at command record structure method ********************/

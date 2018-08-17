@@ -1,38 +1,49 @@
-CFLAGS = -std=c99 -Wall
+CC = gcc
 
-PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d
+CFLAGS = -std=c99 -Wall
 
 DIR_BUILD = ./build
 
+PPFLAGS = -MT $@ -MMD -MP -MF $(DIR_BUILD)/$*.d
+
+SOURCES = src/at_command.c \
+		  src/at_fsm.c \
+		  src/at_xrecord.c \
+		  src/hash.c \
+		  src/queue.c \
+		  src/stdlog.c \
+		  test.c
+
+OBJECTS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(SOURCES))))
+
 TARGET = test
 
-SOURCES = $(wildcard *.c)
+DEPFILES = $(patsubst %.o, %.d, $(OBJECTS))
 
-OBJS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(SOURCES))))
-
-DEPFILES = $(patsubst %.o, %.d, $(OBJS))
-
+# set c sources search path
+vpath %.c $(sort $(dir $(SOURCES)))
 
 .PHONY : all clean
 all : $(DIR_BUILD)/$(TARGET)
 
-$(DIR_BUILD)/$(TARGET) : $(OBJS) $(DIR_BUILD)
-	cc $(CFLAGS) -o $@ $(OBJS)
+$(DIR_BUILD)/$(TARGET) : $(OBJECTS) Makefile
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-$(DIR_BUILD)/%.o : %.c $(DIR_BUILD)/%.d $(DIR_BUILD)
-	cc $(PPFLAGS) $(CFLAGS) -c $< -o $@
+$(DIR_BUILD)/%.o : %.c Makefile | $(DIR_BUILD)
+	$(CC) $(PPFLAGS) $(CFLAGS) -c $< -o $@
+
+#$(OBJECTS): $(DIR_BUILD)/%.o: %.c
+	#mkdir -p $(@D)
+	#$(CC) $(PPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(DIR_BUILD)/%.d : ;
 .PRECIOUS : $(DIR_BUILD)/%.d
 
-#create build directory
 $(DIR_BUILD) : 
 	mkdir -p $(DIR_BUILD)
 
-#clean outputs
 clean : 
 	rm -rf $(DIR_BUILD)
 
-
-include $(DEPFILES)
+-include $(DEPFILES)
 
