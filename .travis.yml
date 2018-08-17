@@ -1,7 +1,11 @@
 language : c
 compiler : gcc
 os : linux
+before_install:
+    - pip install --user cpp-coveralls
 script : 
-    - make
+    - make -j8
     - ./build/test > log
     - diff log stdlog
+after_success:
+    - coveralls --gcov-options='\-lp'
