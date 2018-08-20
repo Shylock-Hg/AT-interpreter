@@ -20,10 +20,10 @@ typedef enum AT_FLAG {
 typedef struct at_cmd_cb {
 	enum AT_FLAG flag;
 	char * cmd_str;
-	at_cmd_handler_t at_set_handler;
-	at_cmd_handler_t at_read_handler;
-	at_cmd_handler_t at_test_handler;
-	at_cmd_handler_t at_exec_handler;
+	at_cmd_set_t at_set_handler;
+	at_cmd_read_t at_read_handler;
+	at_cmd_test_t at_test_handler;
+	at_cmd_exec_t at_exec_handler;
 } at_cmd_cb_t;
 
 /*! \brief register at command to at comman parser context

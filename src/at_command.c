@@ -33,7 +33,8 @@ void at_cmd_class_release(at_cmd_context_t * instance){
 	free(instance);
 }
 
-void at_cmd_insert(at_cmd_context_t * instance, const char * cmd, at_cmd_handler_t * handlers){
+void at_cmd_insert(at_cmd_context_t * instance, const char * cmd, 
+		void * handlers){
 	hash_insert(instance->hash_instance,cmd,handlers,AT_CMD_HASH_VALUE_SIZE);
 }
 

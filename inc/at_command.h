@@ -33,7 +33,11 @@
  *  \param pointer to command parameters string
  *  \retval custom return code
 */
-typedef int (*at_cmd_handler_t)(const char *);
+//typedef int (*at_cmd_handler_t)(const char *);
+typedef int (*at_cmd_set_t)(char *);
+typedef int (*at_cmd_read_t)(void);
+typedef int (*at_cmd_test_t)(void);
+typedef int (*at_cmd_exec_t)(void);
 
 /*  \brief index of at command callback function in hash value array
  * */
@@ -64,7 +68,7 @@ typedef hash_t at_cmd_t;  //!< key,value,next
 
 //< hash value - 4 at command callback function pointer
 #define AT_CMD_HASH_VALUE_COUNT 4
-#define AT_CMD_HASH_VALUE_SIZE  (sizeof(at_cmd_handler_t)*AT_CMD_HASH_VALUE_COUNT)
+#define AT_CMD_HASH_VALUE_SIZE  (sizeof(at_cmd_set_t)*AT_CMD_HASH_VALUE_COUNT)
 
 //#define AT_CMD_MAX_LEN       20  //!< at command name string length
 //#define AT_CMD_PARAM_MAX_LEN 520  //!< at command parameter string length
@@ -105,7 +109,8 @@ void at_cmd_class_release(at_cmd_context_t * instance);
  *  \param cmd name of at command
  *  \param handlers handler functions of corresponding at command
  * */
-void at_cmd_insert(at_cmd_context_t * instance, const char * cmd, at_cmd_handler_t * handlers);
+void at_cmd_insert(at_cmd_context_t * instance, const char * cmd, 
+		void * handlers);
 
 /*  \brief delete one command from instance
  *  \param instance instance of at command

@@ -2,15 +2,16 @@ empty list
 empty list
 exec hello!
 exec hi!
-set hello world,+HI=hi!
 set hello world!
-read any string
-read any string
-read any string
+set hi hi!
+set hello world!
+read hello!
+read hi!
+read hello!
 exec hello!
 set hello world!
 set hi hahah!
 set hello world!
 exec hello!
-read any string
+read hello!
 exec hi!

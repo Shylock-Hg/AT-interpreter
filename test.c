@@ -29,16 +29,15 @@ void sighandler(int signum){
 
 /********** test at commands **********/
 #define TEST_AT_CMD_HELLO "HELLO"
-int at_cmd_hello_handler0(const char * parameter){
+int at_cmd_hello_handler0(char * parameter){
 	if(NULL == parameter)
 		return -1;
 
 	printf("set hello %s!\n",parameter);
 	return 0;
 }
-int at_cmd_hello_handler1(const char * parameter){
-	UNUSED(parameter);
-	printf("read any string\n");
+int at_cmd_hello_handler1(void){
+	printf("read hello!\n");
 	return 0;
 }
 /*
@@ -46,23 +45,21 @@ int at_cmd_hello_handler2(const char * parameter){
 
 }
 */
-int at_cmd_hello_handler3(const char * parameter){
-	UNUSED(parameter);
+int at_cmd_hello_handler3(void){
 	printf("exec hello!\n");
 	return 0;
 }
 
 #define TEST_AT_CMD_HI "HI"
-int at_cmd_hi_handler0(const char * parameter){
+int at_cmd_hi_handler0(char * parameter){
 	if(NULL == parameter)
 		return -1;
 
 	printf("set hi %s!\n",parameter);
 	return 0;
 }
-int at_cmd_hi_handler1(const char * parameter){
-	UNUSED(parameter);
-	printf("read any string\n");
+int at_cmd_hi_handler1(void){
+	printf("read hi!\n");
 	return 0;
 }
 /*
@@ -70,8 +67,7 @@ int at_cmd_hi_handler2(const char * parameter){
 
 }
 */
-int at_cmd_hi_handler3(const char * parameter){
-	UNUSED(parameter);
+int at_cmd_hi_handler3(void){
 	printf("exec hi!\n");
 	return 0;
 }

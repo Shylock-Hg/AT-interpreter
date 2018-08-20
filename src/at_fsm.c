@@ -371,10 +371,15 @@ void at_cmd_execute(at_cmd_context_t * context,
 		if(xrecord){
 			at_cmd_t * item = at_cmd_lookup(context, xrecord->name);
 			if(item){
-				at_cmd_handler_t * handler = item->value;
+				at_cmd_set_t * handler = item->value;
 				if(handler){
 					if(handler[xrecord->type]){
-						handler[xrecord->type](xrecord->param);
+						if(AT_CMD_INDEX_NO_PARAM == xrecord->type){
+							//!< set
+							(at_cmd_set_t)(handler[xrecord->type])(xrecord->param);
+						}else{  //!< read test exec
+							(at_cmd_read_t)(handler[xrecord->type])(xrecord->param);
+						}
 					}
 				}
 			}
