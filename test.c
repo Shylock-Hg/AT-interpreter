@@ -7,10 +7,12 @@
 #include <string.h>
 #include <signal.h>
 #include <stdbool.h>
+#include <assert.h>
 
 #include "inc/at_command.h"
 #include "inc/at_fsm.h"
 #include "inc/at_table.h"
+#include "inc/at_param.h"
 
 #define TEST_AT_CMD_MAX_LEN       20
 #define TEST_AT_CMD_MAX_PARAM_LEN 512
@@ -28,12 +30,24 @@ void sighandler(int signum){
 }
 
 /********** test at commands **********/
-#define TEST_AT_CMD_HELLO "HELLO"
+#define TEST_AT_CMD_HELLO "HELLO"  //!< AT_HELLO=xxx,yyy
 int at_cmd_hello_handler0(char * parameter){
 	if(NULL == parameter)
 		return -1;
 
-	printf("set hello %s!\n",parameter);
+	at_cmd_params_t * p_at_cmd_params = at_cmd_params_new(parameter, 2, 2);
+	assert(p_at_cmd_params);
+
+	printf("parameters :`%d`-`%s` `%d`-`%s`!\n", 
+			p_at_cmd_params->params[0]->is_in_quote,
+			p_at_cmd_params->params[0]->param, 
+			p_at_cmd_params->params[1]->is_in_quote,
+			p_at_cmd_params->params[1]->param);
+
+	at_cmd_params_release(p_at_cmd_params);
+
+
+	//printf("set hello %s!\n",parameter);
 	return 0;
 }
 int at_cmd_hello_handler1(void){
@@ -55,7 +69,17 @@ int at_cmd_hi_handler0(char * parameter){
 	if(NULL == parameter)
 		return -1;
 
-	printf("set hi %s!\n",parameter);
+	at_cmd_params_t * p_at_cmd_params = at_cmd_params_new(parameter, 2, 2);
+	assert(p_at_cmd_params);
+
+	printf("parameters :`%d`-`%s` `%d`-`%s`!\n", 
+			p_at_cmd_params->params[0]->is_in_quote,
+			p_at_cmd_params->params[0]->param, 
+			p_at_cmd_params->params[1]->is_in_quote,
+			p_at_cmd_params->params[1]->param);
+
+	at_cmd_params_release(p_at_cmd_params);
+
 	return 0;
 }
 int at_cmd_hi_handler1(void){

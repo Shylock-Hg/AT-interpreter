@@ -13,6 +13,7 @@ SOURCES = src/at_command.c \
 		  src/queue.c \
 		  src/stdlog.c \
 		  src/at_table.c \
+		  src/at_param.c \
 		  test.c
 
 OBJECTS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(SOURCES))))

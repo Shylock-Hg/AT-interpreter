@@ -175,6 +175,9 @@ static enum at_cmd_FSM_state at_cmd_FSM_TEST_OR_SET_handler(
 
 	if('?' == c){  //!< test
 		return AT_CMD_FSM_STATE_TEST;
+	}else if('"' == c){  //!< param
+		strnachr(xrecord->param, sizeof(xrecord->param), c);
+		return AT_CMD_FSM_STATE_PARAM;
 	}else{  //!< set
 		strnachr(xrecord->param, sizeof(xrecord->param), c);
 		return AT_CMD_FSM_STATE_SET;
