@@ -2,18 +2,14 @@ empty list
 empty list
 exec hello!
 exec hi!
-parameters :`1`-`;hello;
-` `1`-`;wo;rld`!
-parameters :`0`-`hi` `1`-`shy;lo
-ck`!
+parameters :`1`-`;hello;` `1`-`;wo;rld`!
+parameters :`0`-`hi` `1`-`shy;lock`!
 parameters :`0`-`hello` `0`-`world`!
 read hello!
 read hi!
 read hello!
 exec hello!
 parameters :`0`-`hello` `0`-`world`!
-parameters :`1`-`hah;ah
-` `0`-`shylock`!
 parameters :`0`-`hello` `0`-`world`!
 exec hello!
 read hello!

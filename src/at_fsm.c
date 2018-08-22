@@ -402,19 +402,23 @@ void at_cmd_execute_script(at_cmd_context_t * context, const char * file){
 	FILE * stream = fopen(file, "r");
 	//char * buffer = malloc(context->at_cmd_len + context->at_cmd_param_len + 47);
 	char buffer[1024] = {0};
+	size_t len = 0;
 	at_cmd_xrecord_queue_t * xrecords = queue_class_new(sizeof(at_cmd_xrecord_t));
-	/*
-	while(NULL != fgets(buffer, 
-			context->at_cmd_len + context->at_cmd_param_len + 47, stream)){
+	while(NULL != fgets(buffer, sizeof(buffer)-1, stream)){
 		at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, buffer);
 
 		//at_cmd_xrecord_queue_log(xrecords);
-
-		
 	}
+	/*
+	do{
+		len = fread(buffer, sizeof(char), sizeof(buffer)-1, stream);
+		//printf("read %ld\n", len);
+		buffer[len] = '\0';
+		at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, buffer);
+		at_cmd_xrecord_queue_log(xrecords);
+	}while((sizeof(buffer)-1) <= len);
 	*/
-	fread(buffer, sizeof(buffer), sizeof(buffer), stream);
-	at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, buffer);
+
 	at_cmd_execute(context, xrecords);
 	queue_class_release(xrecords);
 

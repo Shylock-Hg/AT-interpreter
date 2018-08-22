@@ -1,6 +1,4 @@
-AT+HELLO;+HI;+HELLO=";hello;
-",";wo;rld";+HI=hi,"shy;lo
-ck"
+AT+HELLO;+HI;+HELLO=";hello;",";wo;rld";+HI=hi,"shy;lock"
 AT+HELLO=hello,world;+HELLO?;+HI?
 AT+HELLO?;+HELLO;+HI=?
 AT+HELLO=?;+HELLO=?;+HELLO=hello,world;+HI="hah;ah
