@@ -11,6 +11,7 @@
 	extern "C" {
 #endif
 
+#include "at_command.h"
 
 typedef enum AT_FLAG {
 	AT_FLAG_UNVISIABLE = 1,
