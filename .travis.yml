@@ -123,7 +123,8 @@ before_install:
     - eval "${MATRIX_EVAL}"
     - pip install --user cpp-coveralls
 script : 
-    - make -j8
-    - ./build/at test.at > log && diff log stdlog
+    - sudo make install -j8
+    - sudo ldconfig
+    - at test.at > log && diff log stdlog
 after_success:
     - coveralls --exclude=test.c --gcov-options='\-lp'
