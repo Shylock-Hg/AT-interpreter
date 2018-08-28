@@ -136,7 +136,7 @@ int main(int argc, char * argv[]){
 
 #else
 
-	at_cmd_execute_script(context, "test.at");
+	at_cmd_execute_script(context, argv[1]);
 
 #endif
 
