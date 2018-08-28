@@ -124,6 +124,6 @@ before_install:
     - pip install --user cpp-coveralls
 script : 
     - make -j8
-    - ./build/test test.at > log && diff log stdlog
+    - ./build/at test.at > log && diff log stdlog
 after_success:
     - coveralls --exclude=test.c --gcov-options='\-lp'
