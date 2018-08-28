@@ -2,7 +2,7 @@
 LN = ln
 INSTALL = install
 
-CFLAGS_LOCAL = -Wall -g
+CFLAGS_LOCAL = -Wall -g -std=gnu99
 CFLAGS_LOCAL += ${CFLAGS}
 
 prefix = /usr/local
