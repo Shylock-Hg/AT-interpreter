@@ -26,10 +26,9 @@ typedef enum at_cmd_FSM_state {
 	AT_CMD_FSM_STATE_TEST_OR_SET,  //!< '=' after command
 	AT_CMD_FSM_STATE_TEST,         //!< '?' after '='
 	AT_CMD_FSM_STATE_SET,          //!< [^?] after '='
-	AT_CMD_FSM_STATE_PARAM         //!< between '"' and '"'
+	AT_CMD_FSM_STATE_PARAM,        //!< between '"' and '"'
+	AT_CMD_FSM_STATE_COUNT
 } at_cmd_FSM_state_t;
-
-#define AT_CMD_FSM_STATE_COUNT 9
 
 /*! \brief typedef the list to at command record list 
  *
