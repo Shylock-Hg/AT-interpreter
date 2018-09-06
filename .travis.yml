@@ -121,10 +121,12 @@ matrix:
 
 before_install:
     - eval "${MATRIX_EVAL}"
-    - pip install --user cpp-coveralls
+    #- pip install --user cpp-coveralls
 script : 
     - sudo make install -j8
     - sudo ldconfig
     - at test.at > log && diff log stdlog
 after_success:
-    - coveralls --exclude=test.c --gcov-options='\-lp'
+    #- coveralls --exclude=test.c --gcov-options='\-lp'
+    - bash <(curl -s https://codecov.io/bash)
+
