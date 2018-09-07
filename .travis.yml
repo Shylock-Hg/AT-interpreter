@@ -123,7 +123,7 @@ before_install:
     - eval "${MATRIX_EVAL}"
     #- pip install --user cpp-coveralls
 script : 
-    - sudo make install -j8
+    - make -j8 && sudo make install
     - sudo ldconfig
     - at test.at > log && diff log stdlog
 after_success:
