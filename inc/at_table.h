@@ -15,7 +15,7 @@
 
 typedef enum AT_FLAG {
 	AT_FLAG_UNVISIABLE = 1,
-	AT_FLAG_VISIABLE   = (1 << 1),
+	AT_FLAG_VISIABLE   = (1U << 1),
 } AT_FLAG_T;
 
 typedef struct at_cmd_cb {

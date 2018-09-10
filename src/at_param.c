@@ -5,9 +5,9 @@
  * */
 
 #include <assert.h>
-#include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "../inc/at_param.h"
 
@@ -19,8 +19,7 @@ at_cmd_param_t * at_cmd_param_new(char * at_param, bool is_in_quote){
 	at_cmd_param_t * p_at_param = malloc(sizeof(at_cmd_param_t));
 	assert(p_at_param);
 	p_at_param->param = malloc(len_str+1);
-	strcpy(p_at_param->param, at_param);
-	p_at_param->param[len_str] = '\0';
+	strncpy(p_at_param->param, at_param, len_str+1);
 	p_at_param->is_in_quote = is_in_quote;
 
 	return p_at_param;
@@ -57,8 +56,9 @@ at_cmd_params_t * at_cmd_params_new(char * at_param, size_t minnum,
 		//putchar(*iter);
 		if(',' == *iter){  //!< comma
 			//printf("is in quote == `%d`!\n", is_in_quote);
-			if(!is_in_quote)
+			if(!is_in_quote){
 				p_at_cmd_params->count++;
+			}
 		}else if('"' == *iter){  //!< quote
 			is_in_quote = !is_in_quote;
 		}else{  //!< others

@@ -11,7 +11,8 @@
 #include "../inc/stdlog.h"
 #include "../inc/at_command.h"
 
-at_cmd_context_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, size_t at_cmd_param_len, char delimiter){
+at_cmd_context_t * at_cmd_class_new(size_t HASH_TAB_SIZE, 
+		size_t at_cmd_len, size_t at_cmd_param_len, char delimiter){
 	at_cmd_context_t * at_cmd_instance = malloc(sizeof(at_cmd_context_t));
 
 	hash_class_t * hash_instance = hash_new(HASH_TAB_SIZE);
@@ -21,7 +22,8 @@ at_cmd_context_t * at_cmd_class_new(size_t HASH_TAB_SIZE, size_t at_cmd_len, siz
 
 	at_cmd_instance->at_cmd_param_len = at_cmd_param_len;
 
-	//strncpy(at_cmd_instance->delimiter,delimiter,sizeof(at_cmd_instance->delimiter));
+	//strncpy(at_cmd_instance->delimiter,
+	//delimiter,sizeof(at_cmd_instance->delimiter));
 	at_cmd_instance->delimiter = delimiter;
 
 	return at_cmd_instance;
@@ -46,116 +48,4 @@ at_cmd_t * at_cmd_lookup(at_cmd_context_t * instance,const char * cmd){
 	return hash_lookup(instance->hash_instance,cmd);
 }
 
-
-/* non-portable */
-#define AT_CMD_PAT "AT+%[A-Z]"
-
-/*
-
-void at_cmd_handle_str(at_cmd_context_t * instance, const char * cmds){
-	if('\0' == cmds[0])
-		return;
-
-	char * delimiter = strchr(cmds,instance->delimiter);
-	if(NULL == delimiter)
-		return;
-
-	//char cmd[AT_CMD_MAX_LEN+1] = {0};
-	//char param[AT_CMD_PARAM_MAX_LEN+1] = {0};
-	char * cmd   = calloc(sizeof(char),instance->at_cmd_len);
-	if(1 == sscanf(cmds, AT_CMD_PAT, cmd)){
-		char * anchor = strstr(cmds,cmd);
-		anchor += strlen(cmd);
-		at_cmd_t * item = NULL;
-		switch(*anchor){
-		case '=':
-			if('?' == *(anchor+1)){  //!< check
-				item = at_cmd_lookup(instance, cmd);
-				if(NULL != item){
-					at_cmd_handler_t * handler = item->value;
-					if(NULL != handler){
-						if(NULL != handler[AT_CMD_INDEX_CHECK_PARAM])
-							handler[AT_CMD_INDEX_CHECK_PARAM](NULL);
-					}else
-						printf_DBG(DBG_LEVEL_WARN,"unimplement function check parameter\n");
-				}else{
-					printf_DBG(DBG_LEVEL_WARN,"unregister command-`%s`!\n",cmd);
-				}
-				
-			}else{  //!< command with parameters
-				item = at_cmd_lookup(instance, cmd);
-				if(NULL != item){
-					at_cmd_handler_t * handler = item->value;
-					if(NULL != handler){
-						if(NULL != handler[AT_CMD_INDEX_WITH_PARAM])
-							handler[AT_CMD_INDEX_WITH_PARAM](anchor+1);
-					}else
-						printf_DBG(DBG_LEVEL_WARN,"unimplement function check parameter\n");
-				}else{
-					printf_DBG(DBG_LEVEL_WARN,"unregister command-`%s`!\n",cmd);
-				}
-			
-			}
-			break;
-		case '?':  //!< query
-				item = at_cmd_lookup(instance, cmd);
-				if(NULL != item){
-					at_cmd_handler_t * handler = item->value;
-					if(NULL != handler){
-						if(NULL != handler[AT_CMD_INDEX_QUERY_PARAM])
-							handler[AT_CMD_INDEX_QUERY_PARAM](NULL);
-					}else
-						printf_DBG(DBG_LEVEL_WARN,"unimplement function check parameter\n");
-				}else{
-					printf_DBG(DBG_LEVEL_WARN,"unregister command-`%s`!\n",cmd);
-				}
-
-			break;
-		case '\n':  //!< command without parameters
-				item = at_cmd_lookup(instance, cmd);
-				if(NULL != item){
-					at_cmd_handler_t * handler = item->value;
-					if(NULL != handler){
-						if(NULL != handler[AT_CMD_INDEX_NO_PARAM])
-							handler[AT_CMD_INDEX_NO_PARAM](NULL);
-					}else
-						printf_DBG(DBG_LEVEL_WARN,"unimplement function check parameter\n");
-				}else{
-					printf_DBG(DBG_LEVEL_WARN,"unregister command-`%s`!\n",cmd);
-				}
-
-			break;
-		default:
-			printf_DBG(DBG_LEVEL_WARN,"invalid format!\n");
-		}
-	}else{
-		printf_DBG(DBG_LEVEL_WARN,"invalid command format!\n");
-	}
-	free(cmd);
-	
-	at_cmd_handle_str(instance, delimiter+sizeof(instance->delimiter));
-}
-
-void at_cmd_handle_stream(at_cmd_context_t * instance, const char * file){
-	FILE * stream = fopen(file,"r");
-	if(NULL == stream){
-		printf_DBG(DBG_LEVEL_ERR, "Unexist at script file-`%s`!\n",file);
-		return;
-	}
-
-	//char buffer[AT_CMD_PARAM_MAX_LEN+AT_CMD_MAX_LEN+2] = {0};
-	char * buffer = calloc(sizeof(char), instance->at_cmd_len+instance->at_cmd_param_len+2);
-	while(NULL != fgets(buffer, instance->at_cmd_len+instance->at_cmd_param_len+2, stream)){
-		at_cmd_handle_str(instance, (char*)buffer);
-	}
-
-	fclose(stream);
-}
-*/
-
-/*
-void at_cmd_load_tab(at_cmd_context_t * instance, at_cmd_handler_t * handler[AT_CMD_HASH_VALUE_COUNT]){
-
-}
-*/
 

@@ -5,17 +5,14 @@
  * */
 
 #include <assert.h>
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "../inc/at_fsm.h"
 #include "../inc/at_xrecord.h"
 #include "../inc/stdlog.h"
-
-
-
 
 /*! \brief handler function prototype of FSM state handler
  * */
@@ -42,10 +39,9 @@ static enum at_cmd_FSM_state at_cmd_FSM_start_handler(
 
 	if('A' == c){
 		return AT_CMD_FSM_STATE_A;
-	}else{  //!< match fail
-		return -1; //AT_CMD_FSM_STATE_START;
 	}
 
+	return -1;
 }
 
 /*! \brief parse input character to xrecord structure
@@ -60,9 +56,9 @@ static enum at_cmd_FSM_state at_cmd_FSM_A_handler(
 
 	if('T' == c){
 		return AT_CMD_FSM_STATE_T;
-	}else{  //!< match fail
-		return -1; //AT_CMD_FSM_STATE_START;
 	}
+
+	return -1;
 }
 
 /*! \brief parse input character to xrecord structure
@@ -77,9 +73,9 @@ static enum at_cmd_FSM_state at_cmd_FSM_T_handler(
 
 	if('+' == c){
 		return AT_CMD_FSM_STATE_PLUS;
-	}else{  //!< match fail
-		return -1; //AT_CMD_FSM_STATE_START;
 	}
+
+	return -1;
 }
 
 /*! \brief append a character to string buffer
@@ -102,8 +98,9 @@ static char * strnachr(char * str, size_t len, char c){
 
 	size_t lenstr = strlen(str);
 
-	if(lenstr+1 >= len)  //!< no available buffer memory
+	if(lenstr+1 >= len){  //!< no available buffer memory
 		return NULL;
+	}
 
 	//< append a character
 	str[lenstr] = c;
@@ -125,20 +122,24 @@ static enum at_cmd_FSM_state at_cmd_FSM_PLUS_handler(
 	if(isupper(c)){  //!< at command name
 		strnachr(xrecord->name, sizeof(xrecord->name), c);
 		return AT_CMD_FSM_STATE_PLUS;
-	}else if('=' == c){  //!< test or set
+	}
+	if('=' == c){  //!< test or set
 		return AT_CMD_FSM_STATE_TEST_OR_SET;
-	}else if('?' == c){  //!< query
+	};
+	if('?' == c){  //!< query
 		return AT_CMD_FSM_STATE_QUERY;
-	}else if(';' == c){  //!< set command end
+	};
+	if(';' == c){  //!< set command end
 		xrecord->type = AT_CMD_INDEX_NO_PARAM;
 		return AT_CMD_FSM_STATE_T;
-	}else if(context->delimiter == c){  //!< set command end
+	};
+	if(context->delimiter == c){  //!< set command end
 		xrecord->type = AT_CMD_INDEX_NO_PARAM;
 		return AT_CMD_FSM_STATE_START;
-	}else{  //!< match fail
-		memset(xrecord->name, 0x00, sizeof(xrecord->name));
-		return -1; //AT_CMD_FSM_STATE_START;
-	}
+	};
+
+	memset(xrecord->name, 0x00, sizeof(xrecord->name));
+	return -1; //!< error
 }
 
 /*! \brief parse input character to xrecord structure
@@ -154,13 +155,14 @@ static enum at_cmd_FSM_state at_cmd_FSM_QUERY_handler(
 	if(';' == c){
 		xrecord->type = AT_CMD_INDEX_QUERY_PARAM;
 		return AT_CMD_FSM_STATE_T;
-	}else if(context->delimiter == c){
+	};
+	if(context->delimiter == c){
 		xrecord->type = AT_CMD_INDEX_QUERY_PARAM;
 		return AT_CMD_FSM_STATE_START;
-	}else{  //!< match fail
-		memset(xrecord->name, 0x00, sizeof(xrecord->name));
-		return -1;
 	}
+
+	memset(xrecord->name, 0x00, sizeof(xrecord->name));
+	return -1;
 }
 
 /*! \brief parse input character to xrecord structure
@@ -175,13 +177,14 @@ static enum at_cmd_FSM_state at_cmd_FSM_TEST_OR_SET_handler(
 
 	if('?' == c){  //!< test
 		return AT_CMD_FSM_STATE_TEST;
-	}else if('"' == c){  //!< param
+	};
+	if('"' == c){  //!< param
 		strnachr(xrecord->param, sizeof(xrecord->param), c);
 		return AT_CMD_FSM_STATE_PARAM;
-	}else{  //!< set
-		strnachr(xrecord->param, sizeof(xrecord->param), c);
-		return AT_CMD_FSM_STATE_SET;
 	}
+
+	strnachr(xrecord->param, sizeof(xrecord->param), c);
+	return AT_CMD_FSM_STATE_SET;
 }
 
 /*! \brief parse input character to xrecord structure
@@ -197,13 +200,14 @@ static enum at_cmd_FSM_state at_cmd_FSM_TEST_handler(
 	if(';' == c){
 		xrecord->type = AT_CMD_INDEX_CHECK_PARAM;
 		return AT_CMD_FSM_STATE_T;
-	}else if(context->delimiter == c){
+	};
+	if(context->delimiter == c){
 		xrecord->type = AT_CMD_INDEX_CHECK_PARAM;
 		return AT_CMD_FSM_STATE_START;
-	}else{  //!< match fail
-		memset(xrecord->name, 0x00, sizeof(xrecord->name));
-		return -1;
-	}
+	};
+
+	memset(xrecord->name, 0x00, sizeof(xrecord->name));
+	return -1;  //!< error
 }
 
 /*! \brief parse input character to xrecord structure
@@ -219,16 +223,18 @@ static enum at_cmd_FSM_state at_cmd_FSM_SET_handler(
 	if(';' == c){
 		xrecord->type = AT_CMD_INDEX_WITH_PARAM;
 		return AT_CMD_FSM_STATE_T;
-	}else if(context->delimiter == c){
+	};
+	if(context->delimiter == c){
 		xrecord->type = AT_CMD_INDEX_WITH_PARAM;
 		return AT_CMD_FSM_STATE_START;
-	}else if('"' == c){
+	};
+	if('"' == c){
 		strnachr(xrecord->param, sizeof(xrecord->param), c);
 		return AT_CMD_FSM_STATE_PARAM;
-	}else{
-		strnachr(xrecord->param, sizeof(xrecord->param), c);
-		return AT_CMD_FSM_STATE_SET;
-	}
+	};
+
+	strnachr(xrecord->param, sizeof(xrecord->param), c);
+	return AT_CMD_FSM_STATE_SET;
 }
 
 /*! \brief parse input character to xrecord structure
@@ -244,10 +250,10 @@ static enum at_cmd_FSM_state at_cmd_FSM_PARAM_handler(
 	if('"' == c){
 		strnachr(xrecord->param, sizeof(xrecord->param), c);
 		return AT_CMD_FSM_STATE_SET;
-	}else{
-		strnachr(xrecord->param, sizeof(xrecord->param), c);
-		return AT_CMD_FSM_STATE_PARAM;
-	}
+	};
+
+	strnachr(xrecord->param, sizeof(xrecord->param), c);
+	return AT_CMD_FSM_STATE_PARAM;
 }
 
 static at_cmd_FSM_t FSM[AT_CMD_FSM_STATE_COUNT] = {
@@ -276,8 +282,9 @@ static const char * at_cmd_state_2_str(at_cmd_FSM_state_t state){
 		"AT_CMD_FSM_STATE_PARAM"
 	};
 
-	if(sizeof(at_cmd_state_str) <= state)
+	if(sizeof(at_cmd_state_str) <= state){
 		return NULL;
+	}
 
 	return at_cmd_state_str[state];
 }
@@ -287,8 +294,9 @@ int at_cmd_FSM_parse_record(at_cmd_context_t * context,
 		at_cmd_xrecord_queue_t * xrecords, const char * record){
 	assert(xrecords);
 	assert(record);
-	if(NULL == xrecords || NULL == record)
+	if(NULL == xrecords || NULL == record){
 		return -1;
+	}
 
 	const char * str = record;
 	enum at_cmd_FSM_state state = AT_CMD_FSM_STATE_START;
@@ -325,8 +333,9 @@ int at_cmd_FSM_parse_record(at_cmd_context_t * context,
 	//< release the xrecord
 	at_cmd_xrecord_release(xrecord);
 
-	if(AT_CMD_FSM_STATE_START != state)  //!< error when parse record
+	if(AT_CMD_FSM_STATE_START != state){  //!< error when parse record
 		return -1;
+	}
 
 	return 0;
 }
@@ -399,30 +408,19 @@ void at_cmd_execute(at_cmd_context_t * context,
 void at_cmd_execute_script(at_cmd_context_t * context, const char * file){
 	assert(file);
 
-	FILE * stream = fopen(file, "r");
-	//char * buffer = malloc(context->at_cmd_len + context->at_cmd_param_len + 47);
+	FILE * stream = fopen(file, "re");
 	char buffer[1024] = {0};
-	//size_t len = 0;
-	at_cmd_xrecord_queue_t * xrecords = queue_class_new(sizeof(at_cmd_xrecord_t));
+	at_cmd_xrecord_queue_t * xrecords = queue_class_new(
+			sizeof(at_cmd_xrecord_t));
 	while(NULL != fgets(buffer, sizeof(buffer)-1, stream)){
 		at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, buffer);
 
 		//at_cmd_xrecord_queue_log(xrecords);
 	}
-	/*
-	do{
-		len = fread(buffer, sizeof(char), sizeof(buffer)-1, stream);
-		//printf("read %ld\n", len);
-		buffer[len] = '\0';
-		at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, buffer);
-		at_cmd_xrecord_queue_log(xrecords);
-	}while((sizeof(buffer)-1) <= len);
-	*/
 
 	at_cmd_execute(context, xrecords);
 	queue_class_release(xrecords);
 
-	//free(buffer);
 	fclose(stream);
 }
 
@@ -431,7 +429,8 @@ void at_cmd_execute_script_string(at_cmd_context_t * context,
 	assert(context);
 	assert(script);
 
-	at_cmd_xrecord_queue_t * xrecords = queue_class_new(sizeof(at_cmd_xrecord_t));
+	at_cmd_xrecord_queue_t * xrecords = queue_class_new(
+			sizeof(at_cmd_xrecord_t));
 	at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, script);
 	at_cmd_execute(context, xrecords);
 	queue_class_release(xrecords);

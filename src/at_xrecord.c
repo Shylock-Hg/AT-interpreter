@@ -4,22 +4,26 @@
  *  \email tcath2s@gmail.com
  * */
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "../inc/at_xrecord.h"
 
 
 /******************** at command record structure method ********************/
-at_cmd_xrecord_t * at_cmd_xrecord_new(const char * name , const char * param, enum AT_CMD_INDEX type){
+at_cmd_xrecord_t * at_cmd_xrecord_new(const char * name ,
+		const char * param, enum AT_CMD_INDEX type){
+
 	at_cmd_xrecord_t * xrecord = malloc(sizeof(at_cmd_xrecord_t));
 
 	xrecord->type = type;
-	if(name)
+	if(name){
 		strncpy(xrecord->name, name, sizeof(xrecord->name));
-	if(param)
+	}
+	if(param){
 		strncpy(xrecord->param, param, sizeof(xrecord->param));
+	}
 
 	return xrecord;
 }

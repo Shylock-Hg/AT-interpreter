@@ -33,7 +33,8 @@ typedef enum at_cmd_FSM_state {
 /*! \brief typedef the list to at command record list 
  *
  * */
-typedef queue_class_t at_cmd_xrecord_queue_t;  //!< value memeber point to at_cmd_xrecord_t node
+//< value memeber point to at_cmd_xrecord_t node
+typedef queue_class_t at_cmd_xrecord_queue_t;  
 typedef queue_t       at_cmd_xrecord_node_t;
 
 /*! \brief parse input record string to queue of record structure
@@ -57,7 +58,8 @@ void at_cmd_FSM_gen_xrecord_queue_4_record(
  * */
 void at_cmd_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords);
 
-/*! \brief execute a at command by `at command record queue` and `at command register table`
+/*! \brief execute a at command by `at command record queue` 
+ *         and `at command register table`
  * */
 void at_cmd_execute(at_cmd_context_t * context, 
 		at_cmd_xrecord_queue_t * xrecords);
