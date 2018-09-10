@@ -31,5 +31,5 @@ origin input string -*filter*-> standard record string -*fsm*-> list of at_cmd_t
 
 ## AT front-end FSM
 
-![AT-FSM](https://drive.google.com/open?id=1gcYMMP4pJyG8tfi-xOeEGJjwGsGMwHuJ)
+![AT-FSM](https://drive.google.com/uc?id=1gcYMMP4pJyG8tfi-xOeEGJjwGsGMwHuJ)
 
