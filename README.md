@@ -4,6 +4,7 @@ AT-command interpreter
 
 [![Build Status](https://travis-ci.org/Shylock-Hg/AT-interpreter.svg?branch=master)](https://travis-ci.org/Shylock-Hg/AT-interpreter)
 [![codecov](https://codecov.io/gh/Shylock-Hg/AT-interpreter/branch/master/graph/badge.svg)](https://codecov.io/gh/Shylock-Hg/AT-interpreter)
+[![CodeFactor](https://www.codefactor.io/repository/github/shylock-hg/at-interpreter/badge)](https://www.codefactor.io/repository/github/shylock-hg/at-interpreter)
 
 A simple AT command library implement based on *FSM*(parse AT-script) , *queue*(AT-notation buffer) and *hash looup*(AT-notation store).
 
