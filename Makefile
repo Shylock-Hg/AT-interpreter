@@ -76,7 +76,7 @@ uninstall :
 	rm -f "${DESTDIR}${prefix}/lib/lib$(LIBNAME).so"
 	rm -f "${DESTDIR}${prefix}/bin/$(TARGET)"
 
-test : ${DESTDIR}/${prefix}/bin/$(TARGET) ${DESTDIR}${prefix}/lib/lib$(LIBNAME).so
+test :
 	at test.at > log && diff log stdlog
 
 clean : 
