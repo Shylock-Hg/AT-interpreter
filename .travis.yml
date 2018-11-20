@@ -157,10 +157,15 @@ matrix:
 before_install:
     - eval "${MATRIX_EVAL}"
     #- pip install --user cpp-coveralls
+
 script :
-    - make -j8 && sudo make install
+    - make -j8
+    - sudo make install
     - export LD_LIBRARY_PATH=/usr/local/lib
     - make test
+    - sudo make uninstall
+    - make clean
+
 after_success:
     #- coveralls --exclude=test.c --gcov-options='\-lp'
     - bash <(curl -s https://codecov.io/bash)
