@@ -20,11 +20,11 @@ LIB_SOURCES = src/at_command.c \
 		  src/at_table.c \
 		  src/at_param.c
 
-APP_SOURCE = test.c
+APP_SOURCE = sample.c
 
 LIB_OBJECTS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(LIB_SOURCES))))
 
-APP_OBJECT = test.o
+APP_OBJECT = smaple.o
 
 LIBVERSION = 0.0.1
 LIBNAME = at
@@ -38,7 +38,7 @@ DEPFILES = $(patsubst %.o, %.d, $(LIB_OBJECTS) $(APP_OBJECT))
 # set c sources search path
 vpath %.c $(sort $(dir $(LIB_SOURCES)))
 
-.PHONY : all clean install
+.PHONY : all clean install uninstall test
 all : $(DIR_BUILD)/$(TARGET)
 
 $(DIR_BUILD)/$(TARGET) : $(DIR_BUILD)/$(APP_OBJECT) $(DIR_BUILD)/$(LIB_SO_AT) Makefile
@@ -75,6 +75,9 @@ uninstall :
 	rm -f "${DESTDIR}${prefix}/lib/$(LIB_SO_AT)"
 	rm -f "${DESTDIR}${prefix}/lib/lib$(LIBNAME).so"
 	rm -f "${DESTDIR}${prefix}/bin/$(TARGET)"
+
+test :
+	$(TARGET) test.at > log && diff log stdlog
 
 clean : 
 	rm -rf $(DIR_BUILD)
