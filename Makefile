@@ -77,7 +77,7 @@ uninstall :
 	rm -f "${DESTDIR}${prefix}/bin/$(TARGET)"
 
 test :
-	at test.at > log && diff log stdlog
+	$(TARGET) test.at > log && diff log stdlog
 
 clean : 
 	rm -rf $(DIR_BUILD)
