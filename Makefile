@@ -20,11 +20,11 @@ LIB_SOURCES = src/at_command.c \
 		  src/at_table.c \
 		  src/at_param.c
 
-APP_SOURCE = test.c
+APP_SOURCE = sample.c
 
 LIB_OBJECTS = $(addprefix $(DIR_BUILD)/, $(patsubst %.c, %.o, $(notdir $(LIB_SOURCES))))
 
-APP_OBJECT = test.o
+APP_OBJECT = smaple.o
 
 LIBVERSION = 0.0.1
 LIBNAME = at

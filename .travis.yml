@@ -159,6 +159,7 @@ before_install:
     #- pip install --user cpp-coveralls
 script :
     - make -j8 && sudo make install
+    - export LD_LIBRARY_PATH=/usr/local/lib
     - make test
 after_success:
     #- coveralls --exclude=test.c --gcov-options='\-lp'
