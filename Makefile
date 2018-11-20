@@ -38,7 +38,7 @@ DEPFILES = $(patsubst %.o, %.d, $(LIB_OBJECTS) $(APP_OBJECT))
 # set c sources search path
 vpath %.c $(sort $(dir $(LIB_SOURCES)))
 
-.PHONY : all clean install
+.PHONY : all clean install uninstall test
 all : $(DIR_BUILD)/$(TARGET)
 
 $(DIR_BUILD)/$(TARGET) : $(DIR_BUILD)/$(APP_OBJECT) $(DIR_BUILD)/$(LIB_SO_AT) Makefile
@@ -75,6 +75,9 @@ uninstall :
 	rm -f "${DESTDIR}${prefix}/lib/$(LIB_SO_AT)"
 	rm -f "${DESTDIR}${prefix}/lib/lib$(LIBNAME).so"
 	rm -f "${DESTDIR}${prefix}/bin/$(TARGET)"
+
+test : ${DESTDIR}/${prefix}/bin/$(TARGET) ${DESTDIR}${prefix}/lib/lib$(LIBNAME).so
+	at test.at > log && diff log stdlog
 
 clean : 
 	rm -rf $(DIR_BUILD)

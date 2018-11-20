@@ -159,8 +159,7 @@ before_install:
     #- pip install --user cpp-coveralls
 script :
     - make -j8 && sudo make install
-    - sudo ldconfig
-    - at test.at > log && diff log stdlog
+    - make test
 after_success:
     #- coveralls --exclude=test.c --gcov-options='\-lp'
     - bash <(curl -s https://codecov.io/bash)
