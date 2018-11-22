@@ -18,15 +18,15 @@
 
 /*
 typedef struct queue {
-	void * value;
-	struct queue * _pre;
-	struct queue * _next;
+        void * value;
+        struct queue * _pre;
+        struct queue * _next;
 } queue_t;
 
 typedef struct queue_class {
-	struct queue * _head;  //!< current head
-	struct queue * _tail;  //!< current tail
-	size_t size_value;
+        struct queue * _head;  //!< current head
+        struct queue * _tail;  //!< current tail
+        size_t size_value;
 } queue_class_t;
 */
 
@@ -41,62 +41,64 @@ typedef struct queue_class {
  *  \retval created queue instance
  * */
 struct queue_class * queue_class_new(size_t size_value){
-	struct queue_class * instance = malloc(sizeof(struct queue_class));
+        struct queue_class * instance = malloc(sizeof(struct queue_class));
 
-	instance->_head = NULL;
-	instance->_tail = NULL;
-	instance->size_value = size_value;
+        instance->_head = NULL;
+        instance->_tail = NULL;
+        instance->size_value = size_value;
 
-	return instance;
+        return instance;
 }
 
 struct queue * queue_class_element_new(const struct queue_class * instance, const void * value){
-	struct queue * element = malloc(sizeof(struct queue));
-	assert(NULL != element);
-	if(NULL == element)
-		return NULL;
+        struct queue * element = malloc(sizeof(struct queue));
+        assert(NULL != element);
+        if(NULL == element)
+                return NULL;
 
-	element->value = malloc(instance->size_value);
-	assert(NULL != element);
-	if(NULL == element)
-		return NULL;
-	memcpy(element->value, value, instance->size_value);
+        element->value = malloc(instance->size_value);
+        assert(NULL != element);
+        if(NULL == element->value) {
+                free(element);
+                return NULL;
+        }
+        memcpy(element->value, value, instance->size_value);
 
-	element->_pre  = NULL;
-	element->_next = NULL;
+        element->_pre  = NULL;
+        element->_next = NULL;
 
-	return element;
+        return element;
 }
 
 /*! \brief release the whole queue
  *  \param instance instance of queue
  * */
 void queue_class_release(struct queue_class * instance){
-	assert(NULL != instance);
+        assert(NULL != instance);
 
-	if(NULL == instance)
-		return;
+        if(NULL == instance)
+       	        return;
 
-	//< release queue memory
-	while(NULL != instance->_head){
-		struct queue * temp = instance->_head;
-		instance->_head = instance->_head->_next;
+        //< release queue memory
+        while(NULL != instance->_head){
+       	        struct queue * temp = instance->_head;
+       	        instance->_head = instance->_head->_next;
 
-		queue_class_element_release(instance, temp);
-	}
+                queue_class_element_release(instance, temp);
+        }
 
-	//< release handle memory
-	free(instance);
+        //< release handle memory
+        free(instance);
 }
 
 void queue_class_element_release(const struct queue_class * instance, struct queue * element){
-	assert(NULL != instance && NULL != element);
+        assert(NULL != instance && NULL != element);
 
-	if(NULL == instance || NULL == element)
-		return ;
+        if(NULL == instance || NULL == element)
+        	return ;
 
-	free(element->value);
-	free(element);
+        free(element->value);
+        free(element);
 }
 
 /*! \brief append a element to tail of queue
@@ -105,38 +107,38 @@ void queue_class_element_release(const struct queue_class * instance, struct que
  *  \retval 0 for ok, -1 for fail
  * */
 int queue_class_enqueue(struct queue_class * instance, const void * value){
-	/*
-	struct queue * temp = malloc(sizeof(struct queue));
-	assert(NULL != temp);
-	if(NULL == temp)
-		return -1;
+        /*
+        struct queue * temp = malloc(sizeof(struct queue));
+        assert(NULL != temp);
+        if(NULL == temp)
+        	return -1;
 
-	temp->value = malloc(instance->size_value);
-	assert(NULL != temp->value)
-	if(NULL == temp)
-		return -1;
-	memcpy(temp->value, value, instance->size_value);
+        temp->value = malloc(instance->size_value);
+        assert(NULL != temp->value)
+        if(NULL == temp)
+        	return -1;
+        memcpy(temp->value, value, instance->size_value);
 
-	temp->next = NULL;
-	*/
-	struct queue * element = queue_class_element_new(instance, value);
-	assert(NULL != element);
-	if(NULL == element)
-		return -1;
+        temp->next = NULL;
+        */
+        struct queue * element = queue_class_element_new(instance, value);
+        assert(NULL != element);
+        if(NULL == element)
+       	        return -1;
 
-	if(NULL == instance->_tail && NULL == instance->_head)
-		//< for null queue
-		instance->_head = instance->_tail = element;
-	else if(NULL != instance->_tail){
-		//< enqueue to tail
-		instance->_tail->_next = element;
-		element->_pre = instance->_tail;
+        if(NULL == instance->_tail && NULL == instance->_head)
+        	//< for null queue
+                instance->_head = instance->_tail = element;
+        else if(NULL != instance->_tail){
+                //< enqueue to tail
+                instance->_tail->_next = element;
+                element->_pre = instance->_tail;
 
-		//< scroll tail
-		instance->_tail = element;
-	}
+                //< scroll tail
+                instance->_tail = element;
+        }
 
-	return 0;
+        return 0;
 }
  
 /*! \brief pop a element from queue head
@@ -144,45 +146,45 @@ int queue_class_enqueue(struct queue_class * instance, const void * value){
  *  \retval pointer to new alloc element , must manually free after use
  * */
 struct queue * queue_class_dequeue(struct queue_class * instance){
-	/*
-	assert(NULL != instance && NULL != instance->_tail);
-	if(NULL == instance || NULL == instance->_tail)
-		return NULL;
+        /*
+        assert(NULL != instance && NULL != instance->_tail);
+        if(NULL == instance || NULL == instance->_tail)
+                return NULL;
 
-	struct queue * ret = queue_class_element_new(instance, instance->_tail->value);
-	assert(NULL != ret);
-	if(NULL == ret)
-		return NULL;
+        struct queue * ret = queue_class_element_new(instance, instance->_tail->value);
+        assert(NULL != ret);
+        if(NULL == ret)
+                return NULL;
 
-	struct queue * pre = instance->_tail->_pre;
-	
-	queue_class_element_release(instance, instance->_tail);
+        struct queue * pre = instance->_tail->_pre;
+        
+        queue_class_element_release(instance, instance->_tail);
 
-	instance->_tail = pre;
-	if(NULL != instance->_tail)
-		instance->_tail->_next = NULL;
-	*/
-	assert(NULL != instance && NULL != instance->_head);
-	if(NULL == instance || NULL == instance->_head)
-		return NULL;
+        instance->_tail = pre;
+        if(NULL != instance->_tail)
+                instance->_tail->_next = NULL;
+        */
+        assert(NULL != instance && NULL != instance->_head);
+        if(NULL == instance || NULL == instance->_head)
+                return NULL;
 
-	struct queue * ret = queue_class_element_new(instance, instance->_head->value);
-	assert(NULL != ret);
-	if(NULL == ret)
-		return NULL;
+        struct queue * ret = queue_class_element_new(instance, instance->_head->value);
+        assert(NULL != ret);
+        if(NULL == ret)
+                return NULL;
 
-	struct queue * next = instance->_head->_next;
+        struct queue * next = instance->_head->_next;
 
-	queue_class_element_release(instance, instance->_head);
+        queue_class_element_release(instance, instance->_head);
 
-	//< scroll head
-	instance->_head = next;
-	if(NULL != instance->_head)
-		instance->_head->_pre = NULL;
-	else
-		instance->_tail = NULL;
+        //< scroll head
+        instance->_head = next;
+        if(NULL != instance->_head)
+                instance->_head->_pre = NULL;
+        else
+                instance->_tail = NULL;
 
-	return ret;
+        return ret;
 }
 
 /*! \brief get the element from queue head but not remove
@@ -190,11 +192,11 @@ struct queue * queue_class_dequeue(struct queue_class * instance){
  *  \retval queue pointer to head
  * */
 struct queue * queue_class_peek(const struct queue_class * instance){
-	assert(NULL != instance && NULL != instance->_tail);
-	if(NULL == instance || NULL == instance->_tail)
-		return NULL;
+        assert(NULL != instance && NULL != instance->_tail);
+        if(NULL == instance || NULL == instance->_tail)
+                return NULL;
 
-	return instance->_head;
+        return instance->_head;
 }
 
 /*! \brief get the count of element in queue
@@ -202,18 +204,18 @@ struct queue * queue_class_peek(const struct queue_class * instance){
  *  \retval count of element in queue
  * */
 size_t queue_class_count(const struct queue_class * instance){
-	assert(NULL != instance);
-	if(NULL == instance)
-		return 0;
+        assert(NULL != instance);
+        if(NULL == instance)
+                return 0;
 
-	struct queue * temp = instance->_head;
-	size_t count = 0;
-	while(NULL != temp){
-		count++;
-		temp = temp->_next;
-	}
+        struct queue * temp = instance->_head;
+        size_t count = 0;
+        while(NULL != temp){
+                count++;
+                temp = temp->_next;
+        }
 
-	return count;
+        return count;
 }
 
 /*! \brief check queue if empty
@@ -221,18 +223,17 @@ size_t queue_class_count(const struct queue_class * instance){
  *  \retval bool 0 for not empty, 1 for empty
  * */
 int queue_class_is_empty(const struct queue_class * instance){
-	assert(NULL != instance);
-	if(NULL == instance)
-		return 1;
+        assert(NULL != instance);
+        if(NULL == instance)
+                return 1;
 
-	if(NULL == instance->_head || NULL == instance->_tail)
-		return 1;
-	else 
-		return 0;
+        if(NULL == instance->_head || NULL == instance->_tail)
+                return 1;
+        else 
+                return 0;
 }
 
 //< dynamic queue not 
 //int queue_class_is_full(const struct * queue_class * instance);
 
 /// @}
-

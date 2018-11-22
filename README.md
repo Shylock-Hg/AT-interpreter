@@ -1,6 +1,7 @@
-
 AT-command interpreter
 =========================
+
+A simple AT command library implement based on *FSM*(parse AT-script) , *queue*(AT-notation buffer) and *hash looup*(AT-notation store).
 
 |CI|Coverage|Lint|PR|
 |:--|:--|:--|:--|
@@ -8,31 +9,34 @@ AT-command interpreter
 |||[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/Shylock-Hg/AT-interpreter.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Shylock-Hg/AT-interpreter/context:cpp)||
 |||[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9af7d337e97148818a50f5d68ceb497e)](https://www.codacy.com/app/Shylock-Hg/ABI?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Shylock-Hg/ABI&amp;utm_campaign=Badge_Grade)||
 
-A simple AT command library implement based on *FSM*(parse AT-script) , *queue*(AT-notation buffer) and *hash looup*(AT-notation store).
-
-## overview
+overview
+---------
 
 standard record string : "AT+HGABC?;+HGDDD=?;+HGSBD;+HGHIO=1,2,\"hello world!\n\"\n"
 
-1. at command register sequence :
+1.  at command register sequence :
 at command struct table --> hash lookup table.
 
-
-2. at command handle sequence :
+2.  at command handle sequence :
 origin input string -*filter*-> standard record string -*fsm*-> list of at_cmd_t 
 --> perform list --> release list.
 
+terminology
+------------
 
-## terminology
+1.  record : "AT+HGABC?;+HGDDD=?;+HGSBD;+HGHIO=1,2,\"hello world!\n\"\n"
+2.  prefix : "AT"
+3.  command : "+HGABC?" , "+HGDDD=?" , "+HGSBD" and "+HGHIO=1,2,\"hello world!\n\"\n"
+4.  command name : "+HGABC" , "+HGDDD" , "+HGSBD" and "+HGHIO"
+5.  delimiter command : ';'
+6.  delimiter record : '\n'
 
-1. record : "AT+HGABC?;+HGDDD=?;+HGSBD;+HGHIO=1,2,\"hello world!\n\"\n"
-2. prefix : "AT"
-3. command : "+HGABC?" , "+HGDDD=?" , "+HGSBD" and "+HGHIO=1,2,\"hello world!\n\"\n"
-4. command name : "+HGABC" , "+HGDDD" , "+HGSBD" and "+HGHIO"
-5. delimiter command : ';'
-6. delimiter record : '\n'
-
-## AT front-end FSM
+AT front-end FSM
+------------------
 
 ![AT-FSM](https://drive.google.com/uc?id=1gcYMMP4pJyG8tfi-xOeEGJjwGsGMwHuJ)
 
+Usage
+-------
+
+Please refer to smaple.c for usage of libat API.

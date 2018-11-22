@@ -55,7 +55,7 @@ void println_buf(uint8_t buf[], size_t len);
  *  \param level debug information level
  *  \param format format string
  * */
-#define printf_DBG(level,format,...) printf(level ":" __FILE__ "-" "%u" ":" DBG_TYPE_CHAR ":" format ,__LINE__,##__VA_ARGS__)
+#define printf_DBG(level,format,...) printf(level ":" __FILE__ "-" "%d" ":" DBG_TYPE_CHAR ":" format ,__LINE__,##__VA_ARGS__)
 
 /*! \brief printf buffer log
  *  \param level debug information level
@@ -63,7 +63,7 @@ void println_buf(uint8_t buf[], size_t len);
  *  \param len buffer length
  * */
 #define println_buf_DBG(level,buf,len) do{\
-		printf(level ":" __FILE__ "-" "%u" ":" DBG_TYPE_BIN ":",__LINE__);\
+		printf(level ":" __FILE__ "-" "%d" ":" DBG_TYPE_BIN ":",__LINE__);\
 		println_buf((uint8_t*)buf,len);\
 	}while(0);
 
