@@ -1,6 +1,8 @@
 #CC = gcc
 LN = ln
 INSTALL = install
+RM = $(RM)
+MKDIR = mkdir
 
 CFLAGS_LOCAL = -Wall -g -std=gnu99 -coverage
 CFLAGS_LOCAL += ${CFLAGS}
@@ -33,7 +35,7 @@ LIB_SO_AT = lib$(LIBNAME).so.$(LIBVERSION)
 
 TARGET = at
 
-DEPFILES = $(patsubst %.o, %.d, $(LIB_OBJECTS) $(APP_OBJECT))
+DEPFILES = $(patsubst %.o, %.d, $(LIB_OBJECTS) $(DIR_BUILD)/$(APP_OBJECT))
 
 # set c sources search path
 vpath %.c $(sort $(dir $(LIB_SOURCES)))
@@ -41,17 +43,17 @@ vpath %.c $(sort $(dir $(LIB_SOURCES)))
 .PHONY : all clean install uninstall test
 all : $(DIR_BUILD)/$(TARGET)
 
-$(DIR_BUILD)/$(TARGET) : $(DIR_BUILD)/$(APP_OBJECT) $(DIR_BUILD)/$(LIB_SO_AT) Makefile
-	$(CC) $(CFLAGS_LOCAL) -o $@ $< -L$(shell pwd)/$(DIR_BUILD) -lat
+$(DIR_BUILD)/$(TARGET) : $(DIR_BUILD)/$(APP_OBJECT) $(DIR_BUILD)/$(LIB_SO_AT) | Makefile
+	$(CC) $(CFLAGS_LOCAL) -o $@ $< -L$(shell pwd)/$(DIR_BUILD) -l$(LIBNAME)
 
-$(DIR_BUILD)/$(LIB_SO_AT) : $(LIB_OBJECTS) Makefile
+$(DIR_BUILD)/$(LIB_SO_AT) : $(LIB_OBJECTS) | Makefile
 	$(CC) $(CFLAGS_LOCAL) -shared -o $@ $(LIB_OBJECTS)
 	$(LN) -sf $(shell pwd)/$(DIR_BUILD)/$(LIB_SO_AT) $(DIR_BUILD)/lib$(LIBNAME).so
 
-$(DIR_BUILD)/$(APP_OBJECT) : $(APP_SOURCE) Makefile | $(DIR_BUILD)
+$(DIR_BUILD)/$(APP_OBJECT) : $(APP_SOURCE) $(DIR_BUILD) | Makefile
 	$(CC) -MT $@ -MMD -MP -MF $*.d $(CFLAGS_LOCAL) -c $< -o $@
 
-$(DIR_BUILD)/%.o : %.c Makefile | $(DIR_BUILD)
+$(DIR_BUILD)/%.o : %.c  $(DIR_BUILD) | Makefile
 	$(CC) $(PPFLAGS) $(CFLAGS_LOCAL) -fPIC -c $< -o $@
 
 #$(OBJECTS): $(DIR_BUILD)/%.o: %.c
@@ -62,7 +64,7 @@ $(DIR_BUILD)/%.d : ;
 .PRECIOUS : $(DIR_BUILD)/%.d
 
 $(DIR_BUILD) : 
-	mkdir -p $(DIR_BUILD)
+	$(MKDIR) -p $(DIR_BUILD)
 
 install : all
 	$(INSTALL) -d "${DESTDIR}${prefix}/lib"
@@ -72,15 +74,14 @@ install : all
 	$(INSTALL) $(DIR_BUILD)/$(TARGET) "${DESTDIR}${prefix}/bin"
 
 uninstall : 
-	rm -f "${DESTDIR}${prefix}/lib/$(LIB_SO_AT)"
-	rm -f "${DESTDIR}${prefix}/lib/lib$(LIBNAME).so"
-	rm -f "${DESTDIR}${prefix}/bin/$(TARGET)"
+	$(RM) -f "${DESTDIR}${prefix}/lib/$(LIB_SO_AT)"
+	$(RM) -f "${DESTDIR}${prefix}/lib/lib$(LIBNAME).so"
+	$(RM) -f "${DESTDIR}${prefix}/bin/$(TARGET)"
 
 test :
-	$(TARGET) test.at > log && diff log stdlog
+	@valgrind --leak-check=full --show-leak-kinds=all $(TARGET) test.at > log && diff log stdlog
 
 clean : 
-	rm -rf $(DIR_BUILD)
+	$(RM) -rf $(DIR_BUILD)
 
--include $(DEPFILES)
-
+include $(DEPFILES)
