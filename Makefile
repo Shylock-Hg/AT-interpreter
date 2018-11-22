@@ -1,7 +1,7 @@
 #CC = gcc
 LN = ln
 INSTALL = install
-RM = $(RM)
+RM = rm
 MKDIR = mkdir
 
 CFLAGS_LOCAL = -Wall -g -std=gnu99 -coverage
