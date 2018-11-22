@@ -156,6 +156,7 @@ matrix:
 
 before_install:
     - eval "${MATRIX_EVAL}"
+    - sudo apt-get install valgrind
     #- pip install --user cpp-coveralls
 
 script :
