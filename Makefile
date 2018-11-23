@@ -33,7 +33,7 @@ LIBNAME = at
 
 LIB_SO_AT = lib$(LIBNAME).so.$(LIBVERSION)
 
-TARGET = at
+APP = at
 
 DEPFILES = $(patsubst %.o, %.d, $(LIB_OBJECTS) $(DIR_BUILD)/$(APP_OBJECT))
 
@@ -41,9 +41,9 @@ DEPFILES = $(patsubst %.o, %.d, $(LIB_OBJECTS) $(DIR_BUILD)/$(APP_OBJECT))
 vpath %.c $(sort $(dir $(LIB_SOURCES)))
 
 .PHONY : all clean install uninstall test
-all : $(DIR_BUILD)/$(TARGET)
+all : $(DIR_BUILD)/$(APP)
 
-$(DIR_BUILD)/$(TARGET) : $(DIR_BUILD)/$(APP_OBJECT) $(DIR_BUILD)/$(LIB_SO_AT) | Makefile
+$(DIR_BUILD)/$(APP) : $(DIR_BUILD)/$(APP_OBJECT) $(DIR_BUILD)/$(LIB_SO_AT) | Makefile
 	$(CC) $(CFLAGS_LOCAL) -o $@ $< -L$(shell pwd)/$(DIR_BUILD) -l$(LIBNAME)
 
 $(DIR_BUILD)/$(LIB_SO_AT) : $(LIB_OBJECTS) | Makefile
@@ -67,19 +67,19 @@ $(DIR_BUILD) :
 	$(MKDIR) -p $(DIR_BUILD)
 
 install : all
-	$(INSTALL) -d "${DESTDIR}${prefix}/lib"
-	$(INSTALL) $(DIR_BUILD)/$(LIB_SO_AT) "${DESTDIR}${prefix}/lib"
-	$(LN) -sf ${DESTDIR}${prefix}/lib/$(LIB_SO_AT) ${DESTDIR}${prefix}/lib/lib$(LIBNAME).so
-	$(INSTALL) -d "${DESTDIR}${prefix}/bin"
-	$(INSTALL) $(DIR_BUILD)/$(TARGET) "${DESTDIR}${prefix}/bin"
+	$(INSTALL) -d "${prefix}/lib"
+	$(INSTALL) $(DIR_BUILD)/$(LIB_SO_AT) "${prefix}/lib"
+	$(LN) -sf ${prefix}/lib/$(LIB_SO_AT) ${prefix}/lib/lib$(LIBNAME).so
+	$(INSTALL) -d "${prefix}/bin"
+	$(INSTALL) $(DIR_BUILD)/$(APP) "${prefix}/bin"
 
 uninstall : 
-	$(RM) -f "${DESTDIR}${prefix}/lib/$(LIB_SO_AT)"
-	$(RM) -f "${DESTDIR}${prefix}/lib/lib$(LIBNAME).so"
-	$(RM) -f "${DESTDIR}${prefix}/bin/$(TARGET)"
+	$(RM) -f "${prefix}/lib/$(LIB_SO_AT)"
+	$(RM) -f "${prefix}/lib/lib$(LIBNAME).so"
+	$(RM) -f "${prefix}/bin/$(APP)"
 
 test :
-	@valgrind --leak-check=full --show-leak-kinds=all $(TARGET) test.at > log && diff log stdlog
+	@valgrind --leak-check=full --show-leak-kinds=all $(APP) test.at > log && diff log stdlog
 
 clean : 
 	$(RM) -rf $(DIR_BUILD)
