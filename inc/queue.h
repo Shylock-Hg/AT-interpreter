@@ -8,7 +8,7 @@
 #define _QUEUE_H_
 
 #ifdef __cplusplus
-	extern "C" {
+        extern "C" {
 #endif
 
 #include <stddef.h>
@@ -17,15 +17,15 @@
 /// @{
 
 typedef struct queue {
-	void * value;
-	struct queue * _pre;
-	struct queue * _next;
+        void * value;
+        struct queue * _pre;
+        struct queue * _next;
 } queue_t;
 
 typedef struct queue_class {
-	struct queue * _head;  //!< current head
-	struct queue * _tail;  //!< current tail
-	size_t size_value;
+        struct queue * _head;  //!< current head
+        struct queue * _tail;  //!< current tail
+        size_t size_value;
 } queue_class_t;
 
 ///  nil <-  ele <--> ele <--> ele <--> ele -> nil
@@ -47,7 +47,8 @@ struct queue_class * queue_class_new(size_t size_value);
  *  \param value value of element
  *  \retval pointer to created element , NULL for fail
  * */
-struct queue * queue_class_element_new(const struct queue_class * instance, const void * value);
+struct queue * queue_class_element_new(const struct queue_class * instance,
+        const void * value);
 
 /*! \brief release the whole queue
  *  \param instance instance of queue
@@ -58,7 +59,8 @@ void queue_class_release(struct queue_class * instance);
  *  \param instance instance of queue
  *  \param element pointer to element to release
  * */
-void queue_class_element_release(const struct queue_class * instance, struct queue * element);
+void queue_class_element_release(const struct queue_class * instance,
+        struct queue * element);
 
 /*! \brief append a element to tail of queue
  *  \param instance instance of queue
@@ -66,7 +68,7 @@ void queue_class_element_release(const struct queue_class * instance, struct que
  *  \retval 0 for ok, -1 for fail
  * */
 int queue_class_enqueue(struct queue_class * instance, const void * value);
- 
+
 /*! \brief pop a element from queue head
  *  \param instance instance of queue
  *  \retval pointer to new alloc element , must manually free after use
@@ -92,14 +94,13 @@ size_t queue_class_count(const struct queue_class * instance);
  * */
 int queue_class_is_empty(const struct queue_class * instance);
 
-//< dynamic queue not 
-//int queue_class_is_full(const struct queue_class * instance);
+//< dynamic queue not
+// int queue_class_is_full(const struct queue_class * instance);
 
 /// @}
 
 #ifdef __cplusplus
-	}
+        }
 #endif
 
 #endif  //!< _QUEUE_H_
-
