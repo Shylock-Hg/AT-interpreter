@@ -4,7 +4,7 @@ INSTALL = install
 RM = rm
 MKDIR = mkdir
 
-CFLAGS_LOCAL = -Wall -g -std=gnu99 -coverage
+CFLAGS_LOCAL = -Wall -g -std=c11 -coverage
 CFLAGS_LOCAL += ${CFLAGS}
 
 prefix = /usr/local
