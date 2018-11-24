@@ -21,8 +21,16 @@ at_cmd_param_t * at_cmd_param_new(char * at_param, bool is_in_quote){
         }
 
         at_cmd_param_t * p_at_param = malloc(sizeof(at_cmd_param_t));
-        assert(p_at_param);
+        assert(NULL != p_at_param);
+        if (NULL == p_at_param) {
+                return NULL;
+        }
         p_at_param->param = malloc(len_str+1);
+        assert(NULL != p_at_param->param);
+        if (NULL == p_at_param->param) {
+                free(p_at_param);
+                return NULL;
+        }
         strncpy(p_at_param->param, at_param, len_str+1);
         p_at_param->param[len_str] = '\0';
         p_at_param->is_in_quote = is_in_quote;
