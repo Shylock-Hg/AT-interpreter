@@ -20,9 +20,11 @@ at_cmd_xrecord_t * at_cmd_xrecord_new(const char * name ,
         xrecord->type = type;
         if(name){
                 strncpy(xrecord->name, name, sizeof(xrecord->name));
+                xrecord->name[sizeof(xrecord->name)-1] = '\0';
         }
         if(param){
                 strncpy(xrecord->param, param, sizeof(xrecord->param));
+                xrecord->param[sizeof(xrecord->param)-1] = '\0';
         }
 
         return xrecord;

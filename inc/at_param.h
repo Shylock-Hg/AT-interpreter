@@ -15,6 +15,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define MAX_AT_PARAM_BUF_LEN 1024
+
 typedef struct at_cmd_param {
         bool is_in_quote;  //!< is parameter string in quote
         char * param;  //!< parameter string in seperating

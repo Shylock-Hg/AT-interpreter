@@ -15,6 +15,8 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#define MAX_HASH_KEY_BUF_LEN 1024
+
 typedef struct hash {
         char * key;
         void * value;

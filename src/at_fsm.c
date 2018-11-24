@@ -96,7 +96,11 @@ static enum at_cmd_FSM_state at_cmd_FSM_T_handler(
 static char * strnachr(char * str, size_t len, char c){
         assert(str);
 
-        size_t lenstr = strlen(str);
+//        size_t lenstr = strlen(str);
+        const size_t lenstr = strnlen(str, len);
+        if (lenstr >= len) {
+                return NULL;
+        }
 
         if(lenstr+1 >= len){  //!< no available buffer memory
         	return NULL;

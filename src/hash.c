@@ -95,6 +95,10 @@ void hash_release(struct hash_class * instance){
 }
 
 void hash_insert(const struct hash_class * const instance , const char * key, const void * value, const size_t value_size){
+        size_t key_len = strnlen(key, MAX_HASH_KEY_BUF_LEN);
+        if (key_len >= MAX_HASH_KEY_BUF_LEN) {
+                return;
+        }
         assert(NULL != instance && NULL != instance->array && NULL != key && NULL != value);
         if(NULL == instance || NULL == instance->array || NULL == key || NULL == value)
                 return;
@@ -138,8 +142,8 @@ void hash_insert(const struct hash_class * const instance , const char * key, co
         //!< create new list item
         temp = malloc(sizeof(struct hash));
 
-        temp->key = malloc(strlen(key)+1);
-        memcpy(temp->key,key,strlen(key)+1);
+        temp->key = malloc(key_len+1);
+        memcpy(temp->key,key,key_len+1);
 
         temp->value = malloc(value_size);
         memcpy(temp->value,value,value_size);
