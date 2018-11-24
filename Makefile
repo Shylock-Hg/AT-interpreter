@@ -62,7 +62,7 @@ $(DIR_BUILD)/%.d : ;
 .PRECIOUS : $(DIR_BUILD)/%.d
 
 $(DIR_BUILD) : 
-	$(MKDIR) -p @
+	$(MKDIR) -p $@
 
 install : all
 	$(INSTALL) -d "$(prefix)/lib"
