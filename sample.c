@@ -8,6 +8,11 @@
 #include <signal.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#include <unistd.h>
+#include <getopt.h>
 
 #include "inc/at_command.h"
 #include "inc/at_fsm.h"
@@ -98,9 +103,47 @@ int at_cmd_hi_handler3(void){
 
 /********** test at commands **********/
 
-//#define REPL
+#define STR_PARAM "f:h"
 
 int main(int argc, char * argv[]){
+	int c = 0;  //!< opt character
+	/*  \brief mode flag
+	 *  \enum MODE_SCRIPT interpret a brainfuck script file
+	 *  \enum MODE_INTERACTIVE run the brainfuck interpreter in interactive mode 
+	 * */
+	enum {MODE_SCRIPT,MODE_INTERACTIVE} mode = MODE_INTERACTIVE;
+
+	char * file = NULL;  //!< script file
+
+	//!< handle command line parameters
+	while((c = getopt(argc,argv,STR_PARAM)) != -1){
+		switch(c){
+			case 'f':
+				//!< interpret brainfuck script
+				if(access(optarg, F_OK) != -1){
+					mode = MODE_SCRIPT;
+					file = optarg;
+				}else{
+					fprintf(stderr,"Err:unexist file %s!\n",optarg);
+					abort();
+				}
+				break;
+                        case 'h':
+                                fprintf(stderr, "Usage: at -f <script>\n"
+                                        "       at\n");
+			case '?':
+				if(optopt == 'f')
+					fprintf(stderr,"Option -%c requires an argument.\n",optopt);
+				else if(isprint(optopt))
+					fprintf(stderr,"Unkown option `-%c`.\n",optopt);
+				else
+					fprintf(stderr,"Unkown option character `\\x%x`.\n",optopt);
+				break;
+			default:
+				abort();
+				break;
+		}
+	}
         //< create at parser context
         /*
         at_cmd_handler_t handlers[2][AT_CMD_HASH_VALUE_COUNT] = {{at_cmd_hello_handler0,
@@ -123,21 +166,21 @@ int main(int argc, char * argv[]){
         at_table_register(context, at_cmd_table, 
        	        sizeof(at_cmd_table)/sizeof(at_cmd_table[0]));
         
-#ifdef REPL
+        if (MODE_INTERACTIVE == mode) {
+                signal(SIGINT, sighandler);
 
-        signal(SIGINT, sighandler);
-
-        char buffer[1024] = {0};
-        while(runcond){
-                fgets(buffer, sizeof(buffer), stdin);
-                at_cmd_execute_script_string(context, buffer);
+                char buffer[1024] = {0};
+                while(runcond){
+                        if (EOF == fgets(buffer, sizeof(buffer), stdin)) {
+                                exit(0);
+                        } else {
+                                at_cmd_execute_script_string(context, buffer);
+                        }
+                }
         }
-
-#else
-
-        at_cmd_execute_script(context, argv[1]);
-
-#endif
+        else {
+                at_cmd_execute_script(context, file);
+        }
 
         at_cmd_class_release(context);
 
