@@ -40,15 +40,15 @@ DEPFILES = $(patsubst %.o, %.d, $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS)) $(DIR
 all : $(DIR_BUILD) $(DIR_BUILD)/$(APP)
 
 $(DIR_BUILD)/$(APP) : $(DIR_BUILD)/$(APP_OBJECT) $(DIR_BUILD)/$(LIB_SO) $(DIR_BUILD)/$(LIB_A) Makefile | $(DIR_BUILD)
-	$(CC) $(CFLAGS_LOCAL) -o $@ $< -L$(shell pwd)/$(DIR_BUILD) -l$(LIB_NAME)
+	$(CC) $(CFLAGS_LOCAL) -o $@ $< -L$(PWD)/$(DIR_BUILD) -l$(LIB_NAME)
 
 $(DIR_BUILD)/$(LIB_SO) : $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS)) Makefile | $(DIR_BUILD)
 	$(CC) $(CFLAGS_LOCAL) -shared -o $@ $(filter %.o, $^)
-	$(LN) -sf $(shell pwd)/$@ $(DIR_BUILD)/lib$(LIB_NAME).so
+	$(LN) -sf $(PWD)/$@ $(DIR_BUILD)/lib$(LIB_NAME).so
 
 $(DIR_BUILD)/$(LIB_A) : $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS)) Makefile | $(DIR_BUILD)
 	$(AR) $(ARFLAGS) $@ $(filter %.o, $^)
-	$(LN) -sf $(shell pwd)/$@ $(DIR_BUILD)/lib$(LIB_NAME).a
+	$(LN) -sf $(PWD)/$@ $(DIR_BUILD)/lib$(LIB_NAME).a
 
 $(addprefix $(DIR_BUILD)/, $(APP_OBJECT)) : $(DIR_BUILD)/%.o : %.c Makefile | $(DIR_BUILD)
 	$(MKDIR) -p $(@D)
