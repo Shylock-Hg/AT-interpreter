@@ -43,12 +43,12 @@ $(DIR_BUILD)/$(APP) : $(DIR_BUILD)/$(APP_OBJECT) $(DIR_BUILD)/$(LIB_SO) $(DIR_BU
 	$(CC) $(CFLAGS_LOCAL) -o $@ $< -L$(shell pwd)/$(DIR_BUILD) -l$(LIB_NAME)
 
 $(DIR_BUILD)/$(LIB_SO) : $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS)) Makefile | $(DIR_BUILD)
-	$(CC) $(CFLAGS_LOCAL) -shared -o $@ $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS))
-	$(LN) -sf $(shell pwd)/$(DIR_BUILD)/$(LIB_SO) $(DIR_BUILD)/lib$(LIB_NAME).so
+	$(CC) $(CFLAGS_LOCAL) -shared -o $@ $(filter %.o, $^)
+	$(LN) -sf $(shell pwd)/$@ $(DIR_BUILD)/lib$(LIB_NAME).so
 
 $(DIR_BUILD)/$(LIB_A) : $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS)) Makefile | $(DIR_BUILD)
-	$(AR) $(ARFLAGS) $@ $^
-	$(LN) -sf $(shell pwd)/$(DIR_BUILD)/$(LIB_A) $(DIR_BUILD)/lib$(LIB_NAME).a
+	$(AR) $(ARFLAGS) $@ $(filter %.o, $^)
+	$(LN) -sf $(shell pwd)/$@ $(DIR_BUILD)/lib$(LIB_NAME).a
 
 $(addprefix $(DIR_BUILD)/, $(APP_OBJECT)) : $(DIR_BUILD)/%.o : %.c Makefile | $(DIR_BUILD)
 	$(MKDIR) -p $(@D)
