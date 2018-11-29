@@ -171,10 +171,10 @@ int main(int argc, char * argv[]){
 
                 char buffer[1024] = {0};
                 while(runcond){
-                        if (EOF == fgets(buffer, sizeof(buffer), stdin)) {
-                                exit(0);
-                        } else {
+                        if (NULL != fgets(buffer, sizeof(buffer), stdin)) {
                                 at_cmd_execute_script_string(context, buffer);
+                        } else {
+                                fprintf(stderr, "Err: Read line failed!\n");
                         }
                 }
         }
