@@ -19,6 +19,15 @@ APP_SOURCE = sample.c
 APP_OBJECT = sample.o
 APP = at
 
+LIB_INCLUDES = inc/at_command.h \
+        inc/at_fsm.h \
+        inc/at_param.h \
+        inc/at_table.h \
+        inc/at_xrecord.h \
+        inc/hash.h \
+        inc/queue.h \
+        inc/stdlog.h
+
 LIB_SOURCES = src/at_command.c \
         src/at_fsm.c \
         src/at_param.c \
@@ -72,13 +81,17 @@ install : all
 	$(LN) -sf "$(prefix)/lib/$(LIB_A)" "$(prefix)/lib/lib$(LIB_NAME).a"
 	$(INSTALL) -d "$(prefix)/bin"
 	$(INSTALL) "$(DIR_BUILD)/$(APP)" "$(prefix)/bin"
+	$(INSTALL) -d "$(prefix)/include"
+	$(MKDIR) -p "$(prefix)/include/$(LIB_NAME)"
+	for header in $(LIB_INCLUDES); do $(INSTALL) -m 444  "$${header}" "$(prefix)/include/$(LIB_NAME)"; done
 
 uninstall :
-	$(RM) -f "$(prefix)/lib/$(LIB_SO)"
-	$(RM) -f "$(prefix)/lib/lib$(LIB_NAME).so"
-	$(RM) -f "$(prefix)/lib/$(LIB_A)"
-	$(RM) -f "$(prefix)/lib/lib$(LIB_NAME).a"
-	$(RM) -f "$(prefix)/bin/$(APP)"
+	$(RM) -f  "$(prefix)/lib/$(LIB_SO)"
+	$(RM) -f  "$(prefix)/lib/lib$(LIB_NAME).so"
+	$(RM) -f  "$(prefix)/lib/$(LIB_A)"
+	$(RM) -f  "$(prefix)/lib/lib$(LIB_NAME).a"
+	$(RM) -f  "$(prefix)/bin/$(APP)"
+	$(RM) -rf "$(prefix)/include/$(LIB_NAME)"
 
 test :
 	$(VALGRIND) $(APP) -f test.at > log && diff log stdlog
