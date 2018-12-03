@@ -13,26 +13,12 @@
 
 #include <unistd.h>
 #include <getopt.h>
+#include <errno.h>
 
 #include "inc/at_command.h"
 #include "inc/at_fsm.h"
 #include "inc/at_table.h"
 #include "inc/at_param.h"
-
-#define TEST_AT_CMD_MAX_LEN       20
-#define TEST_AT_CMD_MAX_PARAM_LEN 512
-#define TEST_AT_CMD_DELIMITER     '\n'
-#define TEST_HASH_TAB_SIZE        100
-
-#define UNUSED(x) (void)(x)
-
-static bool runcond = true;
-
-void sighandler(int signum){
-        if(SIGINT == signum){
-                runcond = false;
-        }
-}
 
 /********** test at commands **********/
 #define TEST_AT_CMD_HELLO "HELLO"  //!< AT_HELLO=xxx,yyy
@@ -103,53 +89,90 @@ int at_cmd_hi_handler3(void){
 
 /********** test at commands **********/
 
+#define TEST_AT_CMD_MAX_LEN       20
+#define TEST_AT_CMD_MAX_PARAM_LEN 512
+#define TEST_AT_CMD_DELIMITER     '\n'
+#define TEST_HASH_TAB_SIZE        100
+
+#define UNUSED(x) (void)(x)
+
+static bool runcond = true;
+
+void sighandler(int signum){
+        if(SIGINT == signum){
+                runcond = false;
+        }
+}
+
 #define STR_PARAM "f:h"
 
-int main(int argc, char * argv[]){
+/*  \brief mode flag
+ *  \enum MODE_SCRIPT interpret a brainfuck script file
+ *  \enum MODE_INTERACTIVE run the brainfuck interpreter in interactive mode
+ * */
+typedef enum {
+        MODE_SCRIPT,
+        MODE_INTERACTIVE
+} app_mode_t;
+
+typedef struct param {
+        char * file;
+        app_mode_t mode;
+} param_t;
+
+int parse_params(int argc, char * argv[], param_t * param) {
 	int c = 0;  //!< opt character
-	/*  \brief mode flag
-	 *  \enum MODE_SCRIPT interpret a brainfuck script file
-	 *  \enum MODE_INTERACTIVE run the brainfuck interpreter in interactive mode 
-	 * */
-	enum {MODE_SCRIPT,MODE_INTERACTIVE} mode = MODE_INTERACTIVE;
-
-	char * file = NULL;  //!< script file
-
 	//!< handle command line parameters
 	while((c = getopt(argc,argv,STR_PARAM)) != -1){
 		switch(c){
 			case 'f':
 				//!< interpret brainfuck script
 				if(access(optarg, F_OK) != -1){
-					mode = MODE_SCRIPT;
-					file = optarg;
+					param->mode = MODE_SCRIPT;
+					param->file = optarg;
 				}else{
 					fprintf(stderr,"Err:unexist file %s!\n",optarg);
-					abort();
+                                        return -EINVAL;
 				}
 				break;
                         case 'h':
                                 fprintf(stderr, "Usage: at -f <script>\n"
                                         "       at\n");
+                                exit(0);
 			case '?':
-				if(optopt == 'f')
-					fprintf(stderr,"Option -%c requires an argument.\n",optopt);
-				else if(isprint(optopt))
-					fprintf(stderr,"Unkown option `-%c`.\n",optopt);
-				else
-					fprintf(stderr,"Unkown option character `\\x%x`.\n",optopt);
-				break;
+				if(optopt == 'f') {
+					fprintf(
+                                                stderr,
+                                                "Option -%c requires an argument.\n",optopt);
+                                } else if(isprint(optopt)) {
+					fprintf(
+                                                stderr,
+                                                "Unkown option `-%c`.\n",optopt);
+                                } else {
+					fprintf(
+                                                stderr,
+                                                "Unkown option character `\\x%x`.\n",optopt);
+                                }
 			default:
-				abort();
+                                return -EINVAL;
 				break;
 		}
 	}
-        //< create at parser context
-        /*
-        at_cmd_handler_t handlers[2][AT_CMD_HASH_VALUE_COUNT] = {{at_cmd_hello_handler0,
-       	        at_cmd_hello_handler1,NULL,at_cmd_hello_handler3},
-       	        {at_cmd_hi_handler0,at_cmd_hi_handler1,NULL,at_cmd_hi_handler3}};
-        */
+        return 0;
+}
+
+int main(int argc, char * argv[]){
+        int err = 0;
+        //< parse command line input arguments
+        param_t param = {
+                .file = NULL,
+                .mode = MODE_INTERACTIVE
+        };
+        err = parse_params(argc, argv, &param);
+        if (0 > err) {
+                return -err;
+        }
+
         //< AT command register table
         at_cmd_cb_t at_cmd_table[2] = {
        	        {AT_FLAG_VISIABLE, TEST_AT_CMD_HI, at_cmd_hi_handler0,
@@ -166,7 +189,7 @@ int main(int argc, char * argv[]){
         at_table_register(context, at_cmd_table, 
        	        sizeof(at_cmd_table)/sizeof(at_cmd_table[0]));
         
-        if (MODE_INTERACTIVE == mode) {
+        if (MODE_INTERACTIVE == param.mode) {  //!< REPL
                 signal(SIGINT, sighandler);
 
                 char buffer[1024] = {0};
@@ -178,8 +201,8 @@ int main(int argc, char * argv[]){
                         }
                 }
         }
-        else {
-                at_cmd_execute_script(context, file);
+        else {  //!< script
+                at_cmd_execute_script(context, param.file);
         }
 
         at_cmd_class_release(context);
