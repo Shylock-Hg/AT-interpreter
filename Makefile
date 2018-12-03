@@ -94,6 +94,7 @@ uninstall :
 	$(RM) -rf "$(prefix)/include/$(LIB_NAME)"
 
 test :
+	$(VALGRIND) $(APP) -h
 	$(VALGRIND) $(APP) -f test.at > log && diff log stdlog
 
 clean :
