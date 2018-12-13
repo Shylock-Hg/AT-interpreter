@@ -4,12 +4,6 @@ language : c
 #    - clang
 os : linux
 
-env:
-  global:
-   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-   #   via the "travis encrypt" command using the project repo's public key
-   - secure: "1pYa90gpLRKFgdO7ludhElYQITOENSLO6mzFVBj2lPVx9KpH7rfg4ZYlnKzEBNlB5nSgd96dWfEA0mTZ8vsItXCvxwrJPFrhm95O+NvKhJ8JmvjvoNRDImkdvdq0HkoXoaRi4Jn7SkyeyMiSjNlP6vBGk2+nr45I5GmXbvD/1a83Mo0oONd8zURWcZnKSEclkZM2i2LDBZFtc6KwVgvFTGl/pbmBitxb+OmM/VvLWxBCtgSHp7sYSgtx/nqpkWtIhhi2dqQRW/pjFCqDk1MfQRuehYz9jPc3RUNanadC7M9EU4JONl9TYw/0SHwFTxQczdkFFS6wBj11kyTu0saC5wKfSLA13TTmVpMgeE+SMbJsQfUAbh7Fn/iJjKvIw8DyZ8d8OX6f5tP4vWRzN7CcBXtLPBYrB/Muc7dUdKUpqqMoldXVGHWsEHysQnj8EPPFsTHGuN1Qs0QXntLuY/KU6GzBCMZN9xCI+3R82dV1mNV68Tq5R/5fI6lQmYKpirKarN+M/7lQGtpCg9N1uD3pxQ1NYKgFmFCSrjYdiipghYDlrLyhy7Zhw/I4ApaiRP/61/8yuOtk2n87PG+bCXksdV0DzUyTuz9HIn/2wBbc5uBjYAC5NMmwqEXH7KZI2Bbo8hSkg1m97Cji3mE67YDvCa5fXenHCZM3nrkJmQdPXsY="
-
 matrix:
   include:
     # works on Precise and Trusty
