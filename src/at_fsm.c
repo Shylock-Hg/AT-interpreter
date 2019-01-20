@@ -375,38 +375,52 @@ void at_cmd_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords){
         }
 }
 
+/*! \TODO this function don't report error but ignore it
+*/
 void at_cmd_execute(at_cmd_context_t * context, 
-        	at_cmd_xrecord_queue_t * xrecords){
+        	at_cmd_xrecord_queue_t * xrecords) {
         assert(xrecords);
         assert(context);
 
         at_cmd_xrecord_node_t * node = queue_class_dequeue(xrecords);
         at_cmd_xrecord_t * xrecord = NULL;
-        while(NULL != node){
+        while (NULL != node) {
         	xrecord = node->value;
-        	if(xrecord){
-        		at_cmd_t * item = at_cmd_lookup(context, xrecord->name);
-        		if(item){
-        			at_cmd_set_t * handler = item->value;
-        			if(handler){
-        				if(handler[xrecord->type]){
-        					if(AT_CMD_INDEX_NO_PARAM == xrecord->type){
-        						//!< set
-        						(at_cmd_set_t)(handler[xrecord->type])(xrecord->param);
-        					}else{  //!< read test exec
-        						(at_cmd_read_t)(handler[xrecord->type])(xrecord->param);
-        					}
-        				}
-        			}
-        		}
-        		
-        	}
+                if (NULL == xrecord) {
+                        // failed to get AT command record in queue node
+                        goto ITER_FAILED;
+                }
+
+                at_cmd_t * item = at_cmd_lookup(context, xrecord->name);
+                if (NULL == item) {
+                        // failed to find the AT command registered in table
+                        goto ITER_FAILED;
+                }
+
+                at_cmd_set_t * handler = item->value;
+                if (NULL == handler) {
+                        // failed to find the hook array of the AT command
+                        goto ITER_FAILED;
+                }
+                if (NULL == handler[xrecord->type]) {
+                        // failed to find the specified hook of the AT command
+                        goto ITER_FAILED;
+                }
+                // execute the hook function now!
+                if (AT_CMD_INDEX_NO_PARAM == xrecord->type) {
+                        //!< set
+                        ((at_cmd_set_t)(handler[xrecord->type]))(xrecord->param);
+                }else{  //!< read test exec
+                        ((at_cmd_read_t)(handler[xrecord->type]))();
+                }
+
+ITER_FAILED:  //!< anti leak if return directly when failed
 
         	//< release the dequeue element
         	queue_class_element_release(xrecords, node);
         	//< next xrecord queue node
         	node = queue_class_dequeue(xrecords);
-        }
+        }  //!< while(NULL != node)
 }
 
 void at_cmd_execute_script(at_cmd_context_t * context, const char * file){
