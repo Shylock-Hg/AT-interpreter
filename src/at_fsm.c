@@ -367,7 +367,7 @@ void at_cmd_xrecord_queue_log(at_cmd_xrecord_queue_t * xrecords){
         	at_cmd_xrecord_t * xrecord = node->value;
         	if(xrecord){
         		printf_DBG(DBG_LEVEL_LOG, 
-        				"xrecord->name=`%s`,xrecord->type=`%d`,	xrecord->param=`%s`\n", 
+        				"xrecord->name=`%s`, xrecord->type=`%d`, xrecord->param=`%s`\n", 
         				xrecord->name, xrecord->type, xrecord->param);
         	}
         	
@@ -407,7 +407,7 @@ void at_cmd_execute(at_cmd_context_t * context,
                         goto ITER_FAILED;
                 }
                 // execute the hook function now!
-                if (AT_CMD_INDEX_NO_PARAM == xrecord->type) {
+                if (AT_CMD_INDEX_WITH_PARAM == xrecord->type) {
                         //!< set
                         ((at_cmd_set_t)(handler[xrecord->type]))(xrecord->param);
                 }else{  //!< read test exec
@@ -433,9 +433,9 @@ void at_cmd_execute_script(at_cmd_context_t * context, const char * file){
         while(NULL != fgets(buffer, sizeof(buffer)-1, stream)){
         	at_cmd_FSM_gen_xrecord_queue_4_record(context, xrecords, buffer);
 
-        	//at_cmd_xrecord_queue_log(xrecords);
         }
 
+        //at_cmd_xrecord_queue_log(xrecords);
         at_cmd_execute(context, xrecords);
         queue_class_release(xrecords);
 
