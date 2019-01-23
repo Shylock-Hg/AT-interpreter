@@ -286,7 +286,7 @@ static const char * at_cmd_state_2_str(at_cmd_FSM_state_t state){
         	"AT_CMD_FSM_STATE_PARAM"
         };
 
-        if(sizeof(at_cmd_state_str) <= state){
+        if(0 > state || sizeof(at_cmd_state_str) <= state){
         	return NULL;
         }
 
