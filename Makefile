@@ -15,8 +15,8 @@ CFLAGS_LOCAL += $(CFLAGS)
 
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
 
-APP_SOURCE = sample.c
-APP_OBJECT = sample.o
+APP_SOURCES = sample.c
+APP_OBJECTS = $(patsubst %.c, %.o, $(APP_SOURCES))
 APP = at
 
 LIB_INCLUDES = inc/at_command.h \
@@ -27,7 +27,6 @@ LIB_INCLUDES = inc/at_command.h \
         inc/hash.h \
         inc/queue.h \
         inc/stdlog.h
-
 LIB_SOURCES = src/at_command.c \
         src/at_fsm.c \
         src/at_param.c \
@@ -42,14 +41,14 @@ LIB_NAME = at
 LIB_SO = lib$(LIB_NAME).so.$(LIB_VERSION)
 LIB_A = lib$(LIB_NAME).a.$(LIB_VERSION)
 
-DEPFILES = $(patsubst %.o, %.d, $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS)) $(DIR_BUILD)/$(APP_OBJECT))
+DEPFILES = $(patsubst %.o, %.d, $(addprefix $(DIR_BUILD)/, $(APP_OBJECTS)) $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS)))
 
 .PHONY : all clean install uninstall test
 
 all : $(DIR_BUILD) $(DIR_BUILD)/$(APP)
 
-$(DIR_BUILD)/$(APP) : $(DIR_BUILD)/$(APP_OBJECT) $(DIR_BUILD)/$(LIB_SO) $(DIR_BUILD)/$(LIB_A) Makefile | $(DIR_BUILD)
-	$(CC) $(CFLAGS_LOCAL) -o $@ $< -L$(shell pwd)/$(DIR_BUILD) -l$(LIB_NAME)
+$(DIR_BUILD)/$(APP) : $(addprefix $(DIR_BUILD)/, $(APP_OBJECTS)) $(DIR_BUILD)/$(LIB_SO) $(DIR_BUILD)/$(LIB_A) Makefile | $(DIR_BUILD)
+	$(CC) $(CFLAGS_LOCAL) -o $@ ${addprefix $(DIR_BUILD)/, $(APP_OBJECTS)} -L$(shell pwd)/$(DIR_BUILD) -l$(LIB_NAME)
 
 $(DIR_BUILD)/$(LIB_SO) : $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS)) Makefile | $(DIR_BUILD)
 	$(CC) $(CFLAGS_LOCAL) -shared -o $@ $(filter %.o, $^)
@@ -59,7 +58,7 @@ $(DIR_BUILD)/$(LIB_A) : $(addprefix $(DIR_BUILD)/, $(LIB_OBJECTS)) Makefile | $(
 	$(AR) $(ARFLAGS) $@ $(filter %.o, $^)
 	$(LN) -sf $(shell pwd)/$@ $(DIR_BUILD)/lib$(LIB_NAME).a
 
-$(addprefix $(DIR_BUILD)/, $(APP_OBJECT)) : $(DIR_BUILD)/%.o : %.c Makefile | $(DIR_BUILD)
+$(addprefix $(DIR_BUILD)/, $(APP_OBJECTS)) : $(DIR_BUILD)/%.o : %.c Makefile | $(DIR_BUILD)
 	$(MKDIR) -p $(@D)
 	$(CC) $(PPFLAGS) $(CFLAGS_LOCAL) -c $< -o $@
 
