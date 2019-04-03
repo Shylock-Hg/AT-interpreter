@@ -8,11 +8,10 @@
 #define _STDLOG_H_
 
 #ifdef __cplusplus
-	extern "C" {
+extern "C" {
 #endif
 
-
-/*! \brief stdlog characters format 
+/*! \brief stdlog characters format
  *   `[<level>]:<file-line>:<type>:detail...`
  *   - `[err]:./example-23:char:malloc fail`
  *   - `[warn]:./example-13:char:too long string`
@@ -27,7 +26,7 @@
  * */
 
 /*! \brief DBG debug behavior macro
- *  \value 
+ *  \value
  *         |value|behavior|
  *         |:--|:--|
  *         |0  |retarget debug log to null|
@@ -38,16 +37,16 @@
 
 #if (1 == DBG)  //!< retarget log to stdout
 
-#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
-#define DBG_LEVEL_ERR  "[err]"
+#define DBG_LEVEL_ERR "[err]"
 #define DBG_LEVEL_WARN "[warn]"
-#define DBG_LEVEL_LOG  "[log]"
+#define DBG_LEVEL_LOG "[log]"
 
-#define DBG_TYPE_CHAR  "char"
-#define DBG_TYPE_BIN   "bin"
+#define DBG_TYPE_CHAR "char"
+#define DBG_TYPE_BIN "bin"
 
 void println_buf(uint8_t buf[], size_t len);
 
@@ -55,29 +54,37 @@ void println_buf(uint8_t buf[], size_t len);
  *  \param level debug information level
  *  \param format format string
  * */
-#define printf_DBG(level,format,...) printf(level ":" __FILE__ "-" "%d" ":" DBG_TYPE_CHAR ":" format ,__LINE__,##__VA_ARGS__)
+#define printf_DBG(level, format, ...)         \
+    printf(level ":" __FILE__                  \
+                 "-"                           \
+                 "%d"                          \
+                 ":" DBG_TYPE_CHAR ":" format, \
+           __LINE__, ##__VA_ARGS__)
 
 /*! \brief printf buffer log
  *  \param level debug information level
- *  \param buf buffer pointer 
+ *  \param buf buffer pointer
  *  \param len buffer length
  * */
-#define println_buf_DBG(level,buf,len) do{\
-		printf(level ":" __FILE__ "-" "%d" ":" DBG_TYPE_BIN ":",__LINE__);\
-		println_buf((uint8_t*)buf,len);\
-	}while(0);
-
+#define println_buf_DBG(level, buf, len)   \
+    do {                                   \
+        printf(level ":" __FILE__          \
+                     "-"                   \
+                     "%d"                  \
+                     ":" DBG_TYPE_BIN ":", \
+               __LINE__);                  \
+        println_buf((uint8_t*)buf, len);   \
+    } while (0);
 
 #elif (0 == DBG)  //!< retarget log to null
 
-#define printf_DBG(level,format,...)
-#define printf_buf_DBG(level,buf,len)
+#define printf_DBG(level, format, ...)
+#define printf_buf_DBG(level, buf, len)
 
 #endif
 
 #ifdef __cplusplus
-	}
+}
 #endif
 
 #endif  //!< _STDLOG_H_
-

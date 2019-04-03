@@ -8,10 +8,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
-void println_buf(uint8_t buf[], size_t len){
-        for(size_t i = 0; i<len; i++){
-                printf("%2x",buf[i]);
-        }
-        putchar('\n');
+void println_buf(uint8_t buf[], size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        printf("%2x", buf[i]);
+    }
+    putchar('\n');
 }
-
