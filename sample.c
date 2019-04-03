@@ -15,10 +15,10 @@
 #include <getopt.h>
 #include <errno.h>
 
-#include "inc/at_command.h"
-#include "inc/at_fsm.h"
-#include "inc/at_table.h"
-#include "inc/at_param.h"
+#include <at/at_command.h>
+#include <at/at_fsm.h>
+#include <at/at_table.h>
+#include <at/at_param.h>
 
 /********** test at commands **********/
 #define TEST_AT_CMD_HELLO "HELLO"  //!< AT_HELLO=xxx,yyy

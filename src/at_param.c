@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../inc/at_param.h"
+#include <at/at_param.h>
 
 at_cmd_param_t * at_cmd_param_new(char * at_param, bool is_in_quote){
         assert(at_param);

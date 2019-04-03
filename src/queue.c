@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "../inc/queue.h"
+#include <at/internal/queue.h>
 
 ///! \defgroup queue_field
 /// @{

@@ -10,9 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../inc/at_fsm.h"
-#include "../inc/at_xrecord.h"
-#include "../inc/stdlog.h"
+#include <at/at_fsm.h>
+#include <at/internal/at_xrecord.h>
+#include <at/internal/stdlog.h>
 
 /*! \brief handler function prototype of FSM state handler
  * */
