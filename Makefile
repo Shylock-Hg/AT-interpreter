@@ -12,7 +12,7 @@ DIR_INCLUDES = inc
 
 PPFLAGS = -MT $@ -MMD -MP -MF $(patsubst %.o, %.d, $@) -D_POSIX_C_SOURCE=200809L
 
-CFLAGS_LOCAL = -Wall -g -std=c99 -coverage -I.$(DIR_INCLUDES)
+CFLAGS_LOCAL = -Wall -g -std=c99 -coverage -I$(DIR_INCLUDES)
 CFLAGS_LOCAL += $(CFLAGS)
 
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
