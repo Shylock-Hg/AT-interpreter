@@ -4,13 +4,14 @@
 LN = ln
 INSTALL = install
 MKDIR = mkdir
+CP = cp
 
 DIR_BUILD = .build
 prefix = /usr/local
 
 PPFLAGS = -MT $@ -MMD -MP -MF $(patsubst %.o, %.d, $@) -D_POSIX_C_SOURCE=200809L
 
-CFLAGS_LOCAL = -Wall -g -std=c99 -coverage
+CFLAGS_LOCAL = -Wall -g -std=c99 -coverage -I./inc/
 CFLAGS_LOCAL += $(CFLAGS)
 
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
@@ -19,14 +20,16 @@ APP_SOURCES = sample.c
 APP_OBJECTS = $(patsubst %.c, %.o, $(APP_SOURCES))
 APP = at
 
-LIB_INCLUDES = inc/at_command.h \
-        inc/at_fsm.h \
-        inc/at_param.h \
-        inc/at_table.h \
-        inc/at_xrecord.h \
-        inc/hash.h \
-        inc/queue.h \
-        inc/stdlog.h
+DIR_INCLUDES = inc
+
+LIB_INCLUDES = inc/at/at_command.h \
+        inc/at/at_fsm.h \
+        inc/at/at_param.h \
+        inc/at/at_table.h \
+        inc/internal/at_xrecord.h \
+        inc/internal/hash.h \
+        inc/internal/queue.h \
+        inc/internal/stdlog.h
 LIB_SOURCES = src/at_command.c \
         src/at_fsm.c \
         src/at_param.c \
@@ -81,8 +84,7 @@ install : all
 	$(INSTALL) -d "$(prefix)/bin"
 	$(INSTALL) "$(DIR_BUILD)/$(APP)" "$(prefix)/bin"
 	$(INSTALL) -d "$(prefix)/include"
-	$(MKDIR) -p "$(prefix)/include/$(LIB_NAME)"
-	for header in $(LIB_INCLUDES); do $(INSTALL) -m 444  "$${header}" "$(prefix)/include/$(LIB_NAME)"; done
+	$(CP) -r $(DIR_INCLUDES)/* "$(prefix)/include/"
 
 uninstall :
 	$(RM) -f  "$(prefix)/lib/$(LIB_SO)"

@@ -12,7 +12,7 @@
 #endif
 
 #include "./at_command.h"
-#include "./queue.h"
+#include "./internal/queue.h"
 
 
 /*! \brief at command FSM state

@@ -11,7 +11,7 @@
         extern "C" {
 #endif
 
-#include "./at_command.h"
+#include "../at_command.h"
 
 ///!< \defgroup at_xrecord_prototype
 /// @{

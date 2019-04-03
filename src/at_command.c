@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../inc/stdlog.h"
-#include "../inc/at_command.h"
+#include <at/internal/stdlog.h>
+#include <at/at_command.h>
 
 at_cmd_context_t * at_cmd_class_new(size_t HASH_TAB_SIZE, 
         	size_t at_cmd_len, size_t at_cmd_param_len, char delimiter){

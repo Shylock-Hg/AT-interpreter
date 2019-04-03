@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../inc/hash.h"
+#include <at/internal/hash.h>
 
 /*! \brief map characters to one integer 
  *  \param str c-string

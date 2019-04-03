@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../inc/at_xrecord.h"
+#include <at/internal/at_xrecord.h>
 
 
 /******************** at command record structure method ********************/

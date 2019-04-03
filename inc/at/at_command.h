@@ -57,7 +57,7 @@ typedef enum AT_CMD_INDEX {
 #define AT_CMD_MAX_NAME_LEN  128
 #define AT_CMD_MAX_PARAM_LEN 1028
 
-#include "./hash.h"
+#include "./internal/hash.h"
 
 /*  \brief at_cmd_t based on hash_t
  *         - key the cmd string(char*)
