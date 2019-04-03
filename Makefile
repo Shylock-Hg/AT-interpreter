@@ -8,10 +8,11 @@ CP = cp
 
 DIR_BUILD = .build
 prefix = /usr/local
+DIR_INCLUDES = inc
 
 PPFLAGS = -MT $@ -MMD -MP -MF $(patsubst %.o, %.d, $@) -D_POSIX_C_SOURCE=200809L
 
-CFLAGS_LOCAL = -Wall -g -std=c99 -coverage -I./inc/
+CFLAGS_LOCAL = -Wall -g -std=c99 -coverage -I.$(DIR_INCLUDES)
 CFLAGS_LOCAL += $(CFLAGS)
 
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
@@ -19,8 +20,6 @@ VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
 APP_SOURCES = sample.c
 APP_OBJECTS = $(patsubst %.c, %.o, $(APP_SOURCES))
 APP = at
-
-DIR_INCLUDES = inc
 
 LIB_INCLUDES = inc/at/at_command.h \
         inc/at/at_fsm.h \
