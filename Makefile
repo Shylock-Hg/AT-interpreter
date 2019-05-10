@@ -5,6 +5,7 @@ LN = ln
 INSTALL = install
 MKDIR = mkdir
 CP = cp
+FMT=clang-format
 
 DIR_BUILD = .build
 prefix = /usr/local
@@ -99,5 +100,8 @@ test :
 
 clean :
 	$(RM) -rf $(DIR_BUILD)
+
+fmt :
+	$(FMT) -i --style=file $$(find . -type f \( -name '*.c' -o -name '*.h' \))
 
 include $(DEPFILES)
